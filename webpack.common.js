@@ -1,5 +1,3 @@
-const path = require('path');
-
 module.exports = {
     entry: './src/index.tsx',
     module: {
@@ -8,7 +6,15 @@ module.exports = {
                 test: /\.(ts)x?$/,
                 exclude: /node_modules/,
                 use: 'ts-loader'
-            }
+            },
+            {
+                test: /\.(svg|png|jpe?g|gif)$/i,
+                loader: 'file-loader',
+                options: {
+                    name: '[name].[contenthash].[ext]',
+                    outputPath: './assets',
+                },
+            },
         ]
     },
     resolve: {

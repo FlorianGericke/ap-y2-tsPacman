@@ -1,9 +1,11 @@
 import React from 'react';
-import {Button} from "./components/Button";
+import {GameField} from "./components/gameField/GameField";
+import './styles/scss/App.scss';
 
-export const App: React.FC = () => (
-    <>
-     <h1>Hello React</h1>
-        <Button onClick={() => alert('Clicked')}>Click me please</Button>
-    </>
-);
+export const App: React.FC = () => {
+    return (
+        <>
+            <GameField   height={20} width={20} className={'GameField'}/>
+        </>
+    );
+}

@@ -1,0 +1,22 @@
+.field {
+  position: relative;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &:hover {
+    opacity: .8;
+  }
+
+  &--wall {
+    @extend .field;
+    background: #ff3500;
+  }
+
+  &--path {
+    @extend .field;
+    background: #D5AE77;
+  }
+}

@@ -1,5 +1,5 @@
-import {FieldTypes} from "./fieldTypes";
 import Playerable from "../player/playerable";
+import {FieldTypes} from "./FieldTypes";
 
 export default interface Fieldable{
     getUpper: () => Fieldable | null;

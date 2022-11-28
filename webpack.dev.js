@@ -17,8 +17,6 @@ module.exports = merge(common, {
         port: 3000,
         open: true,
         hot: true,
-        compress: true,
-        historyApiFallback: true
     },
     stats: {
         errorDetails: true,

@@ -11,27 +11,57 @@ function updateHandler(e: string) {
 }
 
 function onSave() {
-	const saveName = document.getElementById('saveNameInput') as HTMLInputElement;
+	const saveName = document.getElementById(
+		'saveNameInput',
+	) as HTMLInputElement;
 	if (!saveName.value) {
 		alert('Please enter a valid save name');
 		return;
 	}
-	let GamefieldInformation = {
-		saveName: saveName.value,
+
+	type Fielddable = {
+		mapName: string;
+		width: string;
+		height: string;
+		fields: string[][];
+	};
+
+	const gamefieldInformation: Fielddable = {
+		mapName: saveName.value,
 		width: fieldInformation[0],
 		height: fieldInformation[1],
+		fields: [],
 	};
+
+	const fields: string[][] = [];
 	for (let i = 2; i < fieldInformation.length; i++) {
-		// eslint-disable-next-line
-		const insert = JSON.parse(
-			`{"${fieldInformation[i]}":"${
-				document.getElementById(fieldInformation[i])?.className
-			}"}`,
-		);
-		GamefieldInformation = Object.assign(GamefieldInformation, insert);
+		fields.push([
+			fieldInformation[i],
+			document.getElementById(fieldInformation[i])!.className,
+		]);
+	}
+	gamefieldInformation.fields = fields;
+
+	let savedMaps: Fielddable[] | string | null =
+		localStorage.getItem('savedMaps');
+
+	if (!savedMaps) {
+		savedMaps = '[]';
 	}
 
-	localStorage.setItem(saveName.value, JSON.stringify(GamefieldInformation));
+	savedMaps = JSON.parse(savedMaps) as [];
+
+	const index = savedMaps.findIndex(
+		(field) => field.mapName === gamefieldInformation.mapName,
+	);
+
+	if (index !== -1) {
+		savedMaps[index] = gamefieldInformation;
+	} else {
+		savedMaps.push(gamefieldInformation);
+	}
+
+	localStorage.setItem('savedMaps', JSON.stringify(savedMaps));
 }
 
 export const App: React.FC = () => (

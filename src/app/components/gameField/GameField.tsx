@@ -26,7 +26,9 @@ export const GameField: React.FC<GameField> = (props) => {
 		const row = [];
 		for (let x = 0; x < props.width; x++) {
 			const key = `${`0${x}`.slice(-2)}${`0${y}`.slice(-2)}`;
-			row.push(<Field id={key} size={props.fieldSize} key={parseInt(key)} />);
+			row.push(
+				<Field id={key} size={props.fieldSize} key={parseInt(key)} />,
+			);
 			props.updateFieldInformation(key);
 		}
 		colum.push(row);

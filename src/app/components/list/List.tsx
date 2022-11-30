@@ -6,7 +6,7 @@ interface Listable {
 }
 
 export const List: React.FC<Listable> = (props) => {
-	const [elements, setElements] = useState([]);
+	const [elements, setElementsState] = useState<JSX.Element[]>([]);
 	const [activeElement, setActive] = useState('0');
 
 	function isClassNameActive(activeId: string): string {
@@ -15,30 +15,27 @@ export const List: React.FC<Listable> = (props) => {
 			: 'Div-ListItems';
 	}
 
+	// function setElements(elements: string[]) {
+	// 	const inserts: JSX.Element[] = [];
+	//
+	// 	for (let i = 0; i < elements.length; i++) {
+	// 		inserts.push(
+	// 			<div
+	// 				className={isClassNameActive(`${i + 1}`)}
+	// 				onClick={() => setActive(`${i + 1}`)}
+	// 				id={`${i + 1}`}
+	// 			>
+	// 				{elements[i]}
+	// 			</div>,
+	// 		);
+	// 	}
+	// 	setElementsState(inserts);
+	// }
+
 	return (
 		<div className={props.className}>
 			<div style={{ backgroundColor: 'black' }} className={'Div-List'}>
-				<div
-					className={isClassNameActive('1')}
-					onClick={() => setActive('1')}
-					id={'1'}
-				>
-					Map1
-				</div>
-				<div
-					className={isClassNameActive('2')}
-					onClick={() => setActive('2')}
-					id={'2'}
-				>
-					Map2
-				</div>
-				<div
-					className={isClassNameActive('3')}
-					onClick={() => setActive('3')}
-					id={'3'}
-				>
-					Map3
-				</div>
+				{elements.map((e) => e)}
 			</div>
 		</div>
 	);

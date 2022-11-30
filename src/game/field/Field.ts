@@ -26,7 +26,12 @@ export default class Field implements Fieldable {
 		left: Fieldable | null,
 		fieldType: FieldTypes,
 	) {
-		if (upper === null && right === null && lower === null && left === null) {
+		if (
+			upper === null &&
+			right === null &&
+			lower === null &&
+			left === null
+		) {
 			this._coordinates = [0, 0];
 		} else if (upper !== null && left === null) {
 			const temp = upper.getFieldCoordinates();

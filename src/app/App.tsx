@@ -11,9 +11,7 @@ function updateHandler(e: string) {
 }
 
 function onSave() {
-	const saveName = document.getElementById(
-		'saveNameInput',
-	) as HTMLInputElement;
+	const saveName = document.getElementById('saveNameInput') as HTMLInputElement;
 	if (!saveName.value) {
 		alert('Please enter a valid save name');
 		return;

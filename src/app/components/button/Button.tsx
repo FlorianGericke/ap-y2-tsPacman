@@ -16,9 +16,7 @@ export const Button: React.FC<Clickable> = (props) => {
 			onClick={() => props.onClick && props.onClick()}
 		>
 			<div
-				className={
-					mouseDown ? 'Div-buttonInner--mousedown' : 'Div-buttonInner'
-				}
+				className={mouseDown ? 'Div-buttonInner--mousedown' : 'Div-buttonInner'}
 				onMouseDown={() => setMouseDown(true)}
 				onMouseUp={() => setMouseDown(false)}
 			>

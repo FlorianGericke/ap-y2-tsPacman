@@ -4,11 +4,5 @@ interface Listable {
     className?: string;
 }
 
-export const List: React.FC<Listable> = props => {
-    return (
-        <div className={props.className}>
+export const List: React.FC<Listable> = (props) => <div className={props.className} />;
 
-        </div>
-
-    )
-};

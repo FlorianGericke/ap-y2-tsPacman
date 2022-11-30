@@ -1,7 +1,7 @@
-import Playerable from "../player/playerable";
-import {FieldTypes} from "./FieldTypes";
+import Playerable from '../player/playerable';
+import {FieldTypes} from './FieldTypes';
 
-export default interface Fieldable{
+export interface Fieldable{
     getUpper: () => Fieldable | null;
     getLower: () => Fieldable | null;
     getLeft: () => Fieldable | null;
@@ -11,8 +11,8 @@ export default interface Fieldable{
     isOccupied: () => boolean;
     isOccupiedFrom: () => Playerable;
 
-    getFieldCoordinates: () => [number,number];
+    getFieldCoordinates: () => [number, number];
 
     equals: () => boolean;
     toString: () => string;
-}
+};

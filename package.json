@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "webpack serve --config webpack.dev.js ",
-    "build": "webpack --config webpack.prod.js"
+    "build": "webpack --config webpack.prod.js",
+    "lint": "eslint ./src",
+    "lint:fix": "eslint --fix ./src"
   },
   "repository": {
     "type": "git",
@@ -18,10 +20,14 @@
     "@types/node": "18.11.9",
     "@types/react": "18.0.25",
     "@types/react-dom": "18.0.9",
+    "@typescript-eslint/eslint-plugin": "5.45.0",
+    "@typescript-eslint/parser": "5.45.0",
     "assert": "2.0.0",
     "buffer": "6.0.3",
     "constants-browserify": "1.0.0",
     "css-minimizer-webpack-plugin": "4.2.2",
+    "eslint": "8.28.0",
+    "eslint-plugin-react": "7.31.11",
     "file-loader": "6.2.0",
     "html-webpack-plugin": "5.5.0",
     "mini-css-extract-plugin": "2.7.0",

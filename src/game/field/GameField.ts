@@ -1,3 +1,3 @@
-export default class GameField{
+export default class GameField {
 
 }

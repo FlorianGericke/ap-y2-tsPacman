@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import './scss/Field.scss';
 
-export const Field: React.FC<{ id: string; size?: number }> = (props) => {
-	const [isWall, setWall] = useState(true);
+export const Field: React.FC<{ id: string; isPath: boolean; size?: number }> = (
+	props,
+) => {
+	const [isPath, setPath] = useState(props.isPath);
 
 	let style = {};
 
@@ -17,11 +19,11 @@ export const Field: React.FC<{ id: string; size?: number }> = (props) => {
 		<div style={{ backgroundColor: 'black' }}>
 			<div
 				id={props.id}
-				onClick={() => setWall(!isWall)}
-				className={isWall ? 'Div-field--wall' : 'Div-field--path'}
+				onClick={() => setPath(!isPath)}
+				className={isPath ? 'Div-field--path' : 'Div-field--wall'}
 				style={style}
 			>
-				{isWall ? 'w' : 'p'}
+				{isPath ? 'p' : 'w'}
 			</div>
 		</div>
 	);

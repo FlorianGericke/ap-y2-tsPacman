@@ -3,10 +3,10 @@ import './scss/List.scss';
 
 interface Listable {
 	className?: string;
+	clickHandler: (element: string) => void;
 }
 
 export const List: React.FC<Listable> = (props) => {
-	const [elements, setElementsState] = useState<JSX.Element[]>([]);
 	const [activeElement, setActive] = useState('0');
 
 	function isClassNameActive(activeId: string): string {
@@ -15,22 +15,37 @@ export const List: React.FC<Listable> = (props) => {
 			: 'Div-ListItems';
 	}
 
-	// function setElements(elements: string[]) {
-	// 	const inserts: JSX.Element[] = [];
-	//
-	// 	for (let i = 0; i < elements.length; i++) {
-	// 		inserts.push(
-	// 			<div
-	// 				className={isClassNameActive(`${i + 1}`)}
-	// 				onClick={() => setActive(`${i + 1}`)}
-	// 				id={`${i + 1}`}
-	// 			>
-	// 				{elements[i]}
-	// 			</div>,
-	// 		);
-	// 	}
-	// 	setElementsState(inserts);
-	// }
+	function arrayToDivs(elements: string[]) {
+		const inserts: JSX.Element[] = [];
+		for (let i = 0; i < elements.length; i++) {
+			inserts.push(
+				<div
+					className={isClassNameActive(`${i + 1}`)}
+					onClick={() => {
+						setActive(`${i + 1}`);
+						props.clickHandler(elements[i]);
+					}}
+					id={`${i + 1}`}
+					key={`${i + 1}`}
+				>
+					{elements[i]}
+				</div>,
+			);
+		}
+		return inserts;
+	}
+
+	const savedMaps = JSON.parse(localStorage.getItem('savedMaps')!);
+
+	let elements: JSX.Element[] = [];
+
+	if (savedMaps) {
+		const s: string[] = [];
+		for (let i = 0; i < savedMaps.length; i++) {
+			s.push(savedMaps[i].mapName);
+		}
+		elements = arrayToDivs(s);
+	}
 
 	return (
 		<div className={props.className}>

@@ -1,0 +1,30 @@
+.Div-List {
+  display: flex;
+  flex-direction: column;
+
+  .Div-ListItems {
+    text-align: center;
+
+    &:hover {
+      opacity: .9
+    }
+
+    background-color: white;
+    padding: 0.5rem;
+
+    border: 1px solid black;
+
+    &--active {
+      @extend .Div-ListItems;
+      opacity: .9;
+    }
+
+    &:first-child {
+      border-bottom: none;
+    }
+
+    &:last-child {
+      border-top: none;
+    }
+  }
+}

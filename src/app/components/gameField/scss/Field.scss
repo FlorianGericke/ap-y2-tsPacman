@@ -1,4 +1,4 @@
-.field {
+.Div-field {
   position: relative;
   width: 2.5rem;
   height: 2.5rem;
@@ -12,13 +12,13 @@
   }
 
   &--wall {
-    @extend .field;
+    @extend .Div-field;
     background: #ff3500;
     border: #ff3500 solid;
   }
 
   &--path {
-    @extend .field;
+    @extend .Div-field;
     background: #D5AE77;
     border: #D5AE77 solid;
   }

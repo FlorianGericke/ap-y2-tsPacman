@@ -37,7 +37,7 @@ export const GameField: React.FC<GameField> = (props) => {
 	return (
 		<div className={props.className}>
 			{colum.map((colum) => (
-				<div key={Math.random()} className={'gameFieldRow'}>
+				<div key={Math.random()} className={'Div-gameFieldRow'}>
 					{colum}
 				</div>
 			))}

@@ -18,7 +18,7 @@ export const Field: React.FC<{ id: string; size?: number }> = (props) => {
 			<div
 				id={props.id}
 				onClick={() => setWall(!isWall)}
-				className={isWall ? 'field--wall' : 'field--path'}
+				className={isWall ? 'Div-field--wall' : 'Div-field--path'}
 				style={style}
 			>
 				{isWall ? 'w' : 'p'}

@@ -2,6 +2,7 @@ import React from 'react';
 import { GameField } from './components/gameField/GameField';
 import './styles/scss/App.scss';
 import { Button } from './components/button/Button';
+import { List } from './components/list/List';
 
 const fieldInformation: string[] = [];
 
@@ -24,7 +25,11 @@ function onSave() {
 	};
 	for (let i = 2; i < fieldInformation.length; i++) {
 		// eslint-disable-next-line
-		const insert = JSON.parse(`{"${fieldInformation[i]}":"${document.getElementById(fieldInformation[i])!.className}"}`);
+		const insert = JSON.parse(
+			`{"${fieldInformation[i]}":"${
+				document.getElementById(fieldInformation[i])?.className
+			}"}`,
+		);
 		GamefieldInformation = Object.assign(GamefieldInformation, insert);
 	}
 
@@ -39,18 +44,24 @@ export const App: React.FC = () => (
 			height={20}
 			className="GameField"
 		/>
+		<div style={{ marginLeft: '20px' }}>
+			<div
+				style={{
+					display: 'flex',
+				}}
+			>
+				<Button onClick={onSave} className="Button">
+					Save
+				</Button>
 
-		<div style={{ display: 'flex', height: 'fit-content' }}>
-			<Button onClick={onSave} className="Button">
-				Save
-			</Button>
-
-			<input
-				style={{ marginLeft: '15px' }}
-				placeholder="SaveName"
-				id="saveNameInput"
-				type="text"
-			/>
+				<input
+					style={{ marginLeft: '15px' }}
+					placeholder="SaveName"
+					id="saveNameInput"
+					type="text"
+				/>
+			</div>
+			<List className={'List'} />
 		</div>
 	</div>
 );

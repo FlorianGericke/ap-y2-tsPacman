@@ -1,4 +1,4 @@
-.buttonInnerDiv{
+.Div-buttonInner{
   padding: 10px;
   display: flex;
   justify-content: center;
@@ -12,7 +12,7 @@
   }
 
   &--mousedown{
-    @extend .buttonInnerDiv;
+    @extend .Div-buttonInner;
     box-shadow: black 1px 1px 10px -2px;
   }
 }

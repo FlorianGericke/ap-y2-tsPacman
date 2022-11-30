@@ -1,5 +1,6 @@
 module.exports = {
     entry: './src/index.tsx',
+
     module: {
         rules: [
             {

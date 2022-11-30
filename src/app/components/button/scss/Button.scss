@@ -1,0 +1,18 @@
+.buttonInnerDiv{
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  border-radius: 12px;
+  background-color: blue;
+  box-shadow: blue 1px 1px 10px 2px;
+
+
+  &:hover {
+    opacity: .9;
+  }
+
+  &--mousedown{
+    @extend .buttonInnerDiv;
+    box-shadow: black 1px 1px 10px -2px;
+  }
+}

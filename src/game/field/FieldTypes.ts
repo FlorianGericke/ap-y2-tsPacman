@@ -1,5 +1,5 @@
-export enum FieldTypes{
-    PATH,
-    WALL,
-    SPAWN
+export enum FieldTypes {
+	PATH,
+	WALL,
+	SPAWN,
 }

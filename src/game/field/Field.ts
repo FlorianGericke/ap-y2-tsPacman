@@ -1,9 +1,8 @@
-import {Fieldable} from './Fieldable';
-import {FieldTypes} from './FieldTypes';
-import {Playerable} from '../player/playerable';
+import { Fieldable } from './Fieldable';
+import { FieldTypes } from './FieldTypes';
+import { Playerable } from '../player/playerable';
 
 export default class Field implements Fieldable {
-
 	public static _fieldIdentifierCounter = 0;
 
 	private _fieldIdentifier: number;
@@ -20,31 +19,30 @@ export default class Field implements Fieldable {
 
 	private readonly _coordinates: [number, number];
 
-	constructor (upper: Fieldable | null, right: Fieldable | null, lower: Fieldable | null, left: Fieldable | null, fieldType: FieldTypes) {
-
-		if (upper === null && right === null && lower === null && left === null) {
-
-			this._coordinates = [
-				0,
-				0
-			];
-
+	constructor(
+		upper: Fieldable | null,
+		right: Fieldable | null,
+		lower: Fieldable | null,
+		left: Fieldable | null,
+		fieldType: FieldTypes,
+	) {
+		if (
+			upper === null &&
+			right === null &&
+			lower === null &&
+			left === null
+		) {
+			this._coordinates = [0, 0];
 		} else if (upper !== null && left === null) {
-
 			const temp = upper.getFieldCoordinates();
 			temp[1]++;
 			this._coordinates = temp;
-
 		} else if (left !== null) {
-
 			const temp = left.getFieldCoordinates();
 			temp[0]++;
 			this._coordinates = temp;
-
 		} else {
-
 			throw new Error('field constructor error with coordinates');
-
 		}
 
 		this._fieldType = fieldType;
@@ -53,77 +51,54 @@ export default class Field implements Fieldable {
 		this._lower = lower;
 		this._left = left;
 		this._fieldIdentifier = Field._fieldIdentifierCounter++;
-
 	}
 
-
-	equals (): boolean {
-
+	equals(): boolean {
 		return false;
-
 	}
 
-	getFieldCoordinates (): [number, number] {
-
+	getFieldCoordinates(): [number, number] {
 		return this._coordinates;
-
 	}
 
-	getFieldType (): FieldTypes {
-
+	getFieldType(): FieldTypes {
 		return this._fieldType;
-
 	}
 
-	getLeft (): Fieldable | null {
-
+	getLeft(): Fieldable | null {
 		return this._left;
-
 	}
 
-	getLower (): Fieldable | null {
-
+	getLower(): Fieldable | null {
 		return this._lower;
-
 	}
 
-	getRight (): Fieldable | null {
-
+	getRight(): Fieldable | null {
 		return this._right;
-
 	}
 
-	getUpper (): Fieldable | null {
-
+	getUpper(): Fieldable | null {
 		return this._upper;
-
 	}
 
-	isOccupied (): boolean {
-
+	isOccupied(): boolean {
 		throw new Error('Not implemented yet');
 		// Return null;
-
 	}
 
-	isOccupiedFrom (): Playerable {
-
+	isOccupiedFrom(): Playerable {
 		throw new Error('Not implemented yet');
 		// Return undefined;
-
 	}
 
-	toString (): string {
-
+	toString(): string {
 		return JSON.stringify({
-			'ID': this._fieldIdentifier,
-			'COORDINATES': this._coordinates,
-			'UPPER': this._upper,
-			'RIGHT': this._right,
-			'LOWER': this._lower,
-			'LEFT': this._left
+			ID: this._fieldIdentifier,
+			COORDINATES: this._coordinates,
+			UPPER: this._upper,
+			RIGHT: this._right,
+			LOWER: this._lower,
+			LEFT: this._left,
 		});
-
 	}
-
 }

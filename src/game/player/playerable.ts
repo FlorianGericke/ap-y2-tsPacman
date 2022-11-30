@@ -1,1 +1,1 @@
-export interface Playerable{};
+export interface Playerable {}

@@ -114,6 +114,7 @@ export const App: React.FC = () => {
 					}}
 					className={'List'}
 				/>
+				<Button className={'CreateGameButton'}>Create Game</Button>
 			</div>
 		</div>
 	);

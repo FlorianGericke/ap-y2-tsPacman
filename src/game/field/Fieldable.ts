@@ -7,12 +7,13 @@ export interface Fieldable {
 	getLeft: () => Fieldable | null;
 	getRight: () => Fieldable | null;
 
+	getNumPath: () => number;
+
 	getFieldType: () => FieldTypes;
 	isOccupied: () => boolean;
 	isOccupiedFrom: () => Playerable;
 
-	getFieldCoordinates: () => [number, number];
-
 	equals: () => boolean;
+	toLetter: (showNum: boolean) => string;
 	toString: () => string;
 }

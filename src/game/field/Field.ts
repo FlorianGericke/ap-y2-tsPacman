@@ -3,10 +3,6 @@ import { FieldTypes } from './FieldTypes';
 import { Playerable } from '../player/playerable';
 
 export default class Field implements Fieldable {
-	public static _fieldIdentifierCounter = 0;
-
-	private _fieldIdentifier: number;
-
 	private _upper: Fieldable | null;
 
 	private _right: Fieldable | null;
@@ -17,48 +13,26 @@ export default class Field implements Fieldable {
 
 	private _fieldType: FieldTypes;
 
-	private readonly _coordinates: [number, number];
+	private _id: string;
 
 	constructor(
+		id: string,
 		upper: Fieldable | null,
 		right: Fieldable | null,
 		lower: Fieldable | null,
 		left: Fieldable | null,
 		fieldType: FieldTypes,
 	) {
-		if (
-			upper === null &&
-			right === null &&
-			lower === null &&
-			left === null
-		) {
-			this._coordinates = [0, 0];
-		} else if (upper !== null && left === null) {
-			const temp = upper.getFieldCoordinates();
-			temp[1]++;
-			this._coordinates = temp;
-		} else if (left !== null) {
-			const temp = left.getFieldCoordinates();
-			temp[0]++;
-			this._coordinates = temp;
-		} else {
-			throw new Error('field constructor error with coordinates');
-		}
-
+		this._id = id;
 		this._fieldType = fieldType;
 		this._upper = upper;
 		this._right = right;
 		this._lower = lower;
 		this._left = left;
-		this._fieldIdentifier = Field._fieldIdentifierCounter++;
 	}
 
 	equals(): boolean {
 		return false;
-	}
-
-	getFieldCoordinates(): [number, number] {
-		return this._coordinates;
 	}
 
 	getFieldType(): FieldTypes {
@@ -73,8 +47,16 @@ export default class Field implements Fieldable {
 		return this._lower;
 	}
 
+	setLower(lower: Fieldable) {
+		this._lower = lower;
+	}
+
 	getRight(): Fieldable | null {
 		return this._right;
+	}
+
+	setRight(right: Fieldable) {
+		this._right = right;
 	}
 
 	getUpper(): Fieldable | null {
@@ -93,12 +75,46 @@ export default class Field implements Fieldable {
 
 	toString(): string {
 		return JSON.stringify({
-			ID: this._fieldIdentifier,
-			COORDINATES: this._coordinates,
+			ID: this._id,
 			UPPER: this._upper,
 			RIGHT: this._right,
 			LOWER: this._lower,
 			LEFT: this._left,
+			FIELDTYPE: this._fieldType,
 		});
+	}
+
+	toLetter(showNum: boolean): string {
+		if (this._fieldType === FieldTypes.PATH) {
+			return ` ${showNum ? this.getNumPath() : ' - '} `;
+		} else if (this._fieldType === FieldTypes.WALL) {
+			return ` ${showNum ? this.getNumPath() : ' # '} `;
+		} else if (this._fieldType === FieldTypes.SPAWN) {
+			return ` ${showNum ? this.getNumPath() : ' * '} `;
+		} else {
+			throw new Error('No FieldType defined');
+		}
+	}
+
+	getNumPath(): number {
+		let i = 0;
+
+		if (this.getUpper()?.getFieldType() === FieldTypes.PATH) {
+			i++;
+		}
+
+		if (this.getLeft()?.getFieldType() === FieldTypes.PATH) {
+			i++;
+		}
+
+		if (this.getLower()?.getFieldType() === FieldTypes.PATH) {
+			i++;
+		}
+
+		if (this.getRight()?.getFieldType() === FieldTypes.PATH) {
+			i++;
+		}
+
+		return i;
 	}
 }

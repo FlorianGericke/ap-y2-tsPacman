@@ -2,6 +2,7 @@ import React from 'react';
 import { Field } from './Field';
 import './scss/GameField.scss';
 import { FieldableTemp } from '../../App';
+import { koordinateToId } from '../../../transfers/ProjectUtils';
 
 interface GameField {
 	width: number;
@@ -40,7 +41,7 @@ export const GameField: React.FC<GameField> = (props) => {
 	for (let y = 0; y < height; y++) {
 		const row = [];
 		for (let x = 0; x < width; x++) {
-			const key = `${`0${x}`.slice(-2)}${`0${y}`.slice(-2)}`;
+			const key = koordinateToId(x, y);
 
 			const field = fields.find((field) => field[0] == key);
 			let isPath = false;

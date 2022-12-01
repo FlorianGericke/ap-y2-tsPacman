@@ -5,8 +5,8 @@ export interface TransferInterface {
 		width: number;
 		height: number;
 
-		playerPostion: playerPostion;
-		ghostPositions: ghostPosition[];
+		playerPostion: playerPostion | null;
+		ghostPositions: ghostPosition[] | null;
 	};
 	specifics: {
 		gameField: field[];

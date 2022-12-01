@@ -3,6 +3,9 @@ import { GameField } from './components/gameField/GameField';
 import './styles/scss/App.scss';
 import { Button } from './components/button/Button';
 import { List } from './components/list/List';
+import { GameManager } from '../game/gameManager/GameManager';
+import { ghostPosition } from '../transfers/Types';
+import { FieldTypes } from '../game/field/FieldTypes';
 
 export type FieldableTemp = {
 	mapName: string;
@@ -75,8 +78,8 @@ export const App: React.FC = () => {
 		<div className="Main">
 			<GameField
 				updateFieldInformation={updateHandler}
-				width={20}
-				height={20}
+				width={4}
+				height={4}
 				className="GameField"
 				gamefieldInformation={gameFieldInformation}
 			/>
@@ -114,7 +117,106 @@ export const App: React.FC = () => {
 					}}
 					className={'List'}
 				/>
-				<Button className={'CreateGameButton'}>Create Game</Button>
+				<Button
+					onClick={() => {
+						new GameManager({
+							globals: {
+								width: 4,
+								height: 4,
+
+								playerPostion: null,
+								ghostPositions: null,
+							},
+							specifics: {
+								gameField: [
+									{
+										id: '0000',
+										fieldType: FieldTypes.PATH,
+										collected: false,
+									},
+									{
+										id: '0100',
+										fieldType: FieldTypes.PATH,
+										collected: false,
+									},
+									{
+										id: '0200',
+										fieldType: FieldTypes.WALL,
+										collected: false,
+									},
+									{
+										id: '0300',
+										fieldType: FieldTypes.WALL,
+										collected: false,
+									},
+									{
+										id: '0001',
+										fieldType: FieldTypes.PATH,
+										collected: false,
+									},
+									{
+										id: '0101',
+										fieldType: FieldTypes.PATH,
+										collected: false,
+									},
+									{
+										id: '0201',
+										fieldType: FieldTypes.PATH,
+										collected: false,
+									},
+									{
+										id: '0301',
+										fieldType: FieldTypes.WALL,
+										collected: false,
+									},
+									{
+										id: '0002',
+										fieldType: FieldTypes.WALL,
+										collected: false,
+									},
+									{
+										id: '0102',
+										fieldType: FieldTypes.WALL,
+										collected: false,
+									},
+									{
+										id: '0202',
+										fieldType: FieldTypes.PATH,
+										collected: false,
+									},
+									{
+										id: '0302',
+										fieldType: FieldTypes.WALL,
+										collected: false,
+									},
+									{
+										id: '0003',
+										fieldType: FieldTypes.WALL,
+										collected: false,
+									},
+									{
+										id: '0103',
+										fieldType: FieldTypes.WALL,
+										collected: false,
+									},
+									{
+										id: '0203',
+										fieldType: FieldTypes.PATH,
+										collected: false,
+									},
+									{
+										id: '0303',
+										fieldType: FieldTypes.WALL,
+										collected: false,
+									},
+								],
+							},
+						});
+					}}
+					className={'CreateGameButton'}
+				>
+					Create Game
+				</Button>
 			</div>
 		</div>
 	);

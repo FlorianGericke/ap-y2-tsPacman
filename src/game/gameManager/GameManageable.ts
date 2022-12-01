@@ -1,6 +1,6 @@
-import { Controllable } from './Controllable';
+import { Controllable } from './../Controllable';
 import React from 'react';
-import { FieldableTemp } from '../app/App';
+import { FieldableTemp } from '../../app/App';
 
 export interface GameManageable {
 	runGame: () => void;

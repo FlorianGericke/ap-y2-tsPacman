@@ -8,6 +8,9 @@ import { FieldTypes } from '../game/field/FieldTypes';
 import { GameManager } from '../game/gameManager/GameManager';
 
 export const App: React.FC = () => {
+	const [[dimensionWidth, dimensionHeight], setDimensions] = useState([
+		16, 16,
+	]);
 	const [gameFieldInformation, setGameFieldInformation] =
 		useState<TransferInterface>({
 			globals: {
@@ -98,13 +101,52 @@ export const App: React.FC = () => {
 	return (
 		<div className="Main">
 			<GameField
-				width={16}
-				height={16}
+				width={dimensionWidth}
+				height={dimensionHeight}
 				className="GameField"
 				gamefieldInformation={gameFieldInformation}
 				liftInformationUp={(e) => upliftedIds.push(e)}
 			/>
 			<div style={{ marginLeft: '20px' }}>
+				<div
+					style={{
+						display: 'flex',
+						marginBottom: '25px',
+					}}
+				>
+					<Button
+						className="Button"
+						onClick={() => {
+							const width = (
+								document.getElementById(
+									'width',
+								)! as HTMLInputElement
+							).value;
+							const height = (
+								document.getElementById(
+									'height',
+								)! as HTMLInputElement
+							).value;
+
+							setDimensions([parseInt(width), parseInt(height)]);
+						}}
+					>
+						Apply
+					</Button>
+
+					<input
+						style={{ marginLeft: '15px' }}
+						type={'number'}
+						placeholder={'width'}
+						id={'width'}
+					/>
+					<input
+						style={{ marginLeft: '15px' }}
+						type={'number'}
+						placeholder={'height'}
+						id={'height'}
+					/>
+				</div>
 				<div
 					style={{
 						display: 'flex',

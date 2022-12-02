@@ -15,14 +15,14 @@ export default class GameField {
 			null,
 			null,
 			null,
-			_uiInformation.specifics.gameField.find(
+			_uiInformation.specifics.gameField!.find(
 				(e) => e!.id === koordinateToId(0, 0),
 			)!.fieldType,
 		);
 
-		for (let y = 0; y < _uiInformation.globals.height; y++) {
+		for (let y = 0; y < _uiInformation.globals.height!; y++) {
 			let walker = this.getFieldFromKoordinates(0, y) as Field;
-			for (let x = 1; x < _uiInformation.globals.width; x++) {
+			for (let x = 1; x < _uiInformation.globals.width!; x++) {
 				walker.setRight(
 					new Field(
 						koordinateToId(x, y),
@@ -30,7 +30,7 @@ export default class GameField {
 						null,
 						null,
 						this.getFieldFromKoordinates(x - 1, y),
-						_uiInformation.specifics.gameField.find(
+						_uiInformation.specifics.gameField!.find(
 							(e) => e!.id === koordinateToId(x, y),
 						)!.fieldType,
 					),
@@ -43,7 +43,7 @@ export default class GameField {
 				walker = walker.getRight() as Field;
 			}
 			walker = this.getFieldFromKoordinates(0, y) as Field;
-			if (y === _uiInformation.globals.height - 1) {
+			if (y === _uiInformation.globals.height! - 1) {
 				continue;
 			}
 			walker.setLower(
@@ -53,7 +53,7 @@ export default class GameField {
 					null,
 					null,
 					null,
-					_uiInformation.specifics.gameField.find(
+					_uiInformation.specifics.gameField!.find(
 						(e) => e!.id === koordinateToId(0, y + 1),
 					)!.fieldType,
 				),
@@ -63,8 +63,8 @@ export default class GameField {
 
 	toArray() {
 		const re = [];
-		for (let y = 0; y < this._uiInformation.globals.height; y++) {
-			for (let x = 0; x < this._uiInformation.globals.width; x++) {
+		for (let y = 0; y < this._uiInformation.globals.height!; y++) {
+			for (let x = 0; x < this._uiInformation.globals.width!; x++) {
 				re.push(this.getFieldFromKoordinates(x, y));
 			}
 		}
@@ -73,9 +73,9 @@ export default class GameField {
 	}
 
 	printInConsole(showNum: boolean) {
-		for (let y = 0; y < this._uiInformation.globals.height; y++) {
+		for (let y = 0; y < this._uiInformation.globals.height!; y++) {
 			let line = '';
-			for (let x = 0; x < this._uiInformation.globals.width; x++) {
+			for (let x = 0; x < this._uiInformation.globals.width!; x++) {
 				line += this.getFieldFromKoordinates(x, y)?.toLetter(showNum);
 			}
 			console.log(line);

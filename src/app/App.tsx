@@ -3,30 +3,28 @@ import { GameField } from './components/gameField/GameField';
 import './styles/scss/App.scss';
 import { Button } from './components/button/Button';
 import { List } from './components/list/List';
-import { GameManager } from '../game/gameManager/GameManager';
-import { ghostPosition } from '../transfers/Types';
+import { TransferInterface } from '../transfers/TransferInterface';
 import { FieldTypes } from '../game/field/FieldTypes';
-
-export type FieldableTemp = {
-	mapName: string;
-	width: string;
-	height: string;
-	fields: string[][];
-};
+import { GameManager } from '../game/gameManager/GameManager';
 
 export const App: React.FC = () => {
 	const [gameFieldInformation, setGameFieldInformation] =
-		useState<FieldableTemp>({
-			mapName: '-1',
-			width: '-1',
-			height: '-1',
-			fields: [],
-		});
-	const fieldInformation: string[] = [];
+		useState<TransferInterface>({
+			globals: {
+				width: null,
+				height: null,
 
-	function updateHandler(e: string) {
-		fieldInformation.push(e);
-	}
+				mapName: null,
+
+				playerPostion: null,
+				ghostPositions: null,
+			},
+			specifics: {
+				gameField: [],
+			},
+		});
+
+	const upliftedIds: string[] = [];
 
 	function onSave() {
 		const saveName = document.getElementById(
@@ -37,51 +35,74 @@ export const App: React.FC = () => {
 			return;
 		}
 
-		const gamefieldInformation: FieldableTemp = {
-			mapName: saveName.value,
-			width: fieldInformation[0],
-			height: fieldInformation[1],
-			fields: [],
+		const insertNewSaveMap: TransferInterface = {
+			globals: {
+				mapName: saveName.value,
+				width: parseInt(upliftedIds[0]),
+				height: parseInt(upliftedIds[1]),
+			},
+			specifics: {
+				gameField: [],
+			},
 		};
 
-		const fields: string[][] = [];
-		for (let i = 2; i < fieldInformation.length; i++) {
-			fields.push([
-				fieldInformation[i],
-				document.getElementById(fieldInformation[i])!.className,
-			]);
-		}
-		gamefieldInformation.fields = fields;
+		for (let i = 2; i < upliftedIds.length; i++) {
+			const fieldType: FieldTypes =
+				document.getElementById(upliftedIds[i]).className ===
+				'Div-field--wall'
+					? FieldTypes.WALL
+					: FieldTypes.PATH;
 
-		let savedMaps: FieldableTemp[] | string | null =
+			insertNewSaveMap.specifics.gameField.push({
+				id: upliftedIds[i],
+				fieldType: fieldType,
+				collected: false,
+			});
+		}
+
+		const localStorageValue: string | null =
 			localStorage.getItem('savedMaps');
 
-		if (!savedMaps) {
-			savedMaps = '[]';
-		}
+		const savedMaps: TransferInterface[] = localStorageValue
+			? (JSON.parse(localStorageValue) as TransferInterface[])
+			: (JSON.parse('[]') as TransferInterface[]);
 
-		savedMaps = JSON.parse(savedMaps) as [];
-
-		const index = savedMaps.findIndex(
-			(field) => field.mapName === gamefieldInformation.mapName,
-		);
+		const index = savedMaps.findIndex((map) => {
+			return map.globals.mapName === insertNewSaveMap.globals.mapName;
+		});
 
 		if (index !== -1) {
-			savedMaps[index] = gamefieldInformation;
+			savedMaps[index] = insertNewSaveMap;
 		} else {
-			savedMaps.push(gamefieldInformation);
+			savedMaps.push(insertNewSaveMap);
 		}
 		localStorage.setItem('savedMaps', JSON.stringify(savedMaps));
-		setGameFieldInformation(gamefieldInformation);
+
+		setGameFieldInformation(insertNewSaveMap);
 	}
+
+	function listClickHandler(element: string) {
+		console.log(element);
+		const localStorageValue: string | null =
+			localStorage.getItem('savedMaps');
+
+		const savedMaps: TransferInterface[] = localStorageValue
+			? (JSON.parse(localStorageValue) as TransferInterface[])
+			: (JSON.parse('[]') as TransferInterface[]);
+
+		const i = savedMaps.find((map) => map.globals.mapName === element);
+
+		setGameFieldInformation(i);
+	}
+
 	return (
 		<div className="Main">
 			<GameField
-				updateFieldInformation={updateHandler}
-				width={4}
-				height={4}
+				width={16}
+				height={16}
 				className="GameField"
 				gamefieldInformation={gameFieldInformation}
+				liftInformationUp={(e) => upliftedIds.push(e)}
 			/>
 			<div style={{ marginLeft: '20px' }}>
 				<div
@@ -101,117 +122,12 @@ export const App: React.FC = () => {
 					/>
 				</div>
 				<List
-					clickHandler={(element) => {
-						let savedMaps: FieldableTemp[] | string | null =
-							localStorage.getItem('savedMaps');
-
-						if (savedMaps) {
-							savedMaps = JSON.parse(savedMaps) as [];
-
-							const i = savedMaps.find(
-								(map) => map.mapName === element,
-							);
-
-							setGameFieldInformation(i!);
-						}
-					}}
+					clickHandler={(element) => listClickHandler(element)}
 					className={'List'}
 				/>
 				<Button
 					onClick={() => {
-						new GameManager({
-							globals: {
-								width: 4,
-								height: 4,
-
-								playerPostion: null,
-								ghostPositions: null,
-							},
-							specifics: {
-								gameField: [
-									{
-										id: '0000',
-										fieldType: FieldTypes.PATH,
-										collected: false,
-									},
-									{
-										id: '0100',
-										fieldType: FieldTypes.PATH,
-										collected: false,
-									},
-									{
-										id: '0200',
-										fieldType: FieldTypes.WALL,
-										collected: false,
-									},
-									{
-										id: '0300',
-										fieldType: FieldTypes.WALL,
-										collected: false,
-									},
-									{
-										id: '0001',
-										fieldType: FieldTypes.PATH,
-										collected: false,
-									},
-									{
-										id: '0101',
-										fieldType: FieldTypes.PATH,
-										collected: false,
-									},
-									{
-										id: '0201',
-										fieldType: FieldTypes.PATH,
-										collected: false,
-									},
-									{
-										id: '0301',
-										fieldType: FieldTypes.WALL,
-										collected: false,
-									},
-									{
-										id: '0002',
-										fieldType: FieldTypes.WALL,
-										collected: false,
-									},
-									{
-										id: '0102',
-										fieldType: FieldTypes.WALL,
-										collected: false,
-									},
-									{
-										id: '0202',
-										fieldType: FieldTypes.PATH,
-										collected: false,
-									},
-									{
-										id: '0302',
-										fieldType: FieldTypes.WALL,
-										collected: false,
-									},
-									{
-										id: '0003',
-										fieldType: FieldTypes.WALL,
-										collected: false,
-									},
-									{
-										id: '0103',
-										fieldType: FieldTypes.WALL,
-										collected: false,
-									},
-									{
-										id: '0203',
-										fieldType: FieldTypes.PATH,
-										collected: false,
-									},
-									{
-										id: '0303',
-										fieldType: FieldTypes.WALL,
-										collected: false,
-									},
-								],
-							},
-						});
+						new GameManager(gameFieldInformation);
 					}}
 					className={'CreateGameButton'}
 				>

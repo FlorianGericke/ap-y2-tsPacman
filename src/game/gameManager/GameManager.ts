@@ -1,7 +1,6 @@
 import { TransferInterface } from './../../transfers/TransferInterface';
 import { GameManageable } from './GameManageable';
 import { Controllable } from '../Controllable';
-import { FieldableTemp } from '../../app/App';
 import React from 'react';
 import GameField from '../field/GameField';
 
@@ -10,6 +9,7 @@ export class GameManager implements GameManageable {
 		const temp = new GameField(uiInformation);
 		console.log(temp.toArray());
 		temp.printInConsole(false);
+		console.log('');
 		temp.printInConsole(true);
 	}
 
@@ -31,7 +31,7 @@ export class GameManager implements GameManageable {
 	}
 
 	setUiUpdateHook(
-		hook: React.Dispatch<React.SetStateAction<FieldableTemp>>,
+		hook: React.Dispatch<React.SetStateAction<TransferInterface>>,
 	): void {
 		throw new Error('not implemented yet');
 	}

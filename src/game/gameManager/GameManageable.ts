@@ -1,6 +1,6 @@
 import { Controllable } from './../Controllable';
 import React from 'react';
-import { FieldableTemp } from '../../app/App';
+import { TransferInterface } from '../../transfers/TransferInterface';
 
 export interface GameManageable {
 	runGame: () => void;
@@ -10,6 +10,6 @@ export interface GameManageable {
 	getGameControls: () => Controllable;
 
 	setUiUpdateHook: (
-		hook: React.Dispatch<React.SetStateAction<FieldableTemp>>,
+		hook: React.Dispatch<React.SetStateAction<TransferInterface>>,
 	) => void;
 }

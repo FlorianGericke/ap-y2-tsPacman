@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './scss/List.scss';
+import { TransferInterface } from '../../../transfers/TransferInterface';
 
 interface Listable {
 	className?: string;
@@ -35,14 +36,18 @@ export const List: React.FC<Listable> = (props) => {
 		return inserts;
 	}
 
-	const savedMaps = JSON.parse(localStorage.getItem('savedMaps')!);
+	const localStorageValue: string | null = localStorage.getItem('savedMaps');
+
+	const savedMaps: TransferInterface[] = localStorageValue
+		? (JSON.parse(localStorageValue) as TransferInterface[])
+		: (JSON.parse('[]') as TransferInterface[]);
 
 	let elements: JSX.Element[] = [];
 
 	if (savedMaps) {
 		const s: string[] = [];
 		for (let i = 0; i < savedMaps.length; i++) {
-			s.push(savedMaps[i].mapName);
+			s.push(savedMaps[i].globals.mapName);
 		}
 		elements = arrayToDivs(s);
 	}

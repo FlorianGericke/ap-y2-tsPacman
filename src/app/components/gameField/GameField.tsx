@@ -1,31 +1,28 @@
 import React from 'react';
 import { Field } from './Field';
 import './scss/GameField.scss';
-import { FieldableTemp } from '../../App';
 import { koordinateToId } from '../../../transfers/ProjectUtils';
+import { TransferInterface } from '../../../transfers/TransferInterface';
+import { FieldTypes } from '../../../game/field/FieldTypes';
 
 interface GameField {
 	width: number;
 	height: number;
 	fieldSize?: number;
 	className?: string;
-	updateFieldInformation: (string: string) => void;
-	gamefieldInformation: FieldableTemp;
+	gamefieldInformation: TransferInterface;
+	liftInformationUp: (id: string) => void;
 }
 
 export const GameField: React.FC<GameField> = (props) => {
 	const fieldSize = props.fieldSize;
-	const updateFieldInformation = props.updateFieldInformation;
 
-	let width = props.width;
-	let height = props.height;
-	let fields: string[][] = [];
+	const width = props.gamefieldInformation.globals.width ?? props.width;
+	const height = props.gamefieldInformation.globals.height ?? props.height;
+	const fields = props.gamefieldInformation.specifics.gameField;
 
-	if (props.gamefieldInformation.mapName !== '-1') {
-		width = parseInt(props.gamefieldInformation.width);
-		height = parseInt(props.gamefieldInformation.height);
-		fields = props.gamefieldInformation.fields;
-	}
+	props.liftInformationUp(width.toString());
+	props.liftInformationUp(height.toString());
 
 	if (width > 100 || width < 0) {
 		throw new Error('width must be greater than zero and smaller than 100');
@@ -34,20 +31,16 @@ export const GameField: React.FC<GameField> = (props) => {
 		throw new Error('width must be greater than zero and smaller than 100');
 	}
 
-	updateFieldInformation(width.toString());
-	updateFieldInformation(height.toString());
-
 	const colum = [];
 	for (let y = 0; y < height; y++) {
 		const row = [];
 		for (let x = 0; x < width; x++) {
 			const key = koordinateToId(x, y);
 
-			const field = fields.find((field) => field[0] == key);
+			const field = fields.find((field) => field!.id == key);
 			let isPath = false;
 			if (field) {
-				console.log(field);
-				isPath = field[1] === 'Div-field--path';
+				isPath = field.fieldType === FieldTypes.PATH;
 			}
 
 			row.push(
@@ -58,12 +51,11 @@ export const GameField: React.FC<GameField> = (props) => {
 					key={parseInt(key)}
 				/>,
 			);
-			updateFieldInformation(key);
+
+			props.liftInformationUp(koordinateToId(x, y));
 		}
 		colum.push(row);
 	}
-
-	console.log(props.gamefieldInformation);
 
 	return (
 		<div className={props.className}>

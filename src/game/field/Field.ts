@@ -86,11 +86,11 @@ export default class Field implements Fieldable {
 
 	toLetter(showNum: boolean): string {
 		if (this._fieldType === FieldTypes.PATH) {
-			return ` ${showNum ? this.getNumPath() : ' - '} `;
+			return ` ${showNum ? ' ' + this.getNumPath() + ' ' : ' - '} `;
 		} else if (this._fieldType === FieldTypes.WALL) {
-			return ` ${showNum ? this.getNumPath() : ' # '} `;
+			return ` ${showNum ? ' ' + this.getNumPath() + ' ' : ' # '} `;
 		} else if (this._fieldType === FieldTypes.SPAWN) {
-			return ` ${showNum ? this.getNumPath() : ' * '} `;
+			return ` ${showNum ? ' ' + this.getNumPath() + ' ' : ' * '} `;
 		} else {
 			throw new Error('No FieldType defined');
 		}

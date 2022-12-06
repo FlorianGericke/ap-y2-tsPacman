@@ -22,4 +22,38 @@
     background: #D5AE77;
     border: #D5AE77 solid;
   }
+
+  &--0 {
+    @extend .Div-field;
+    background: yellow;
+    border: yellow solid;
+  }
+
+  &--1 {
+    @extend .Div-field;
+    background: red;
+    border: red solid;
+  }
+
+  &--2 {
+    @extend .Div-field;
+    background: deeppink;
+    border: deeppink solid;
+  }
+
+  &--3 {
+    @extend .Div-field;
+    background: cyan;
+    border: cyan solid;
+  }
+
+  &--4 {
+    @extend .Div-field;
+    background: orange;
+    border: orange solid;
+  }
+}
+
+.droppable{
+  opacity: .8;
 }

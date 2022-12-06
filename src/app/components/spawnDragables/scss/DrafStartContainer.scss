@@ -1,0 +1,12 @@
+.Div-DragContainer{
+  border: 1px solid black;
+  border-radius: 10px;
+  padding: 10px;
+  height: 110px;
+  .Div-DragStartContainer{
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-evenly;
+  }
+}

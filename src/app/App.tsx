@@ -6,6 +6,12 @@ import { List } from './components/list/List';
 import { TransferInterface } from '../transfers/TransferInterface';
 import { FieldTypes } from '../game/field/FieldTypes';
 import { GameManager } from '../game/gameManager/GameManager';
+import { PawnTypes } from '../transfers/PawnTypes';
+import { DragStartContainer } from './components/spawnDragables/DragStartContainer';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { pawn } from '../transfers/Types';
+import { json } from 'stream/consumers';
 
 export const App: React.FC = () => {
 	const [[dimensionWidth, dimensionHeight], setDimensions] = useState([
@@ -19,8 +25,7 @@ export const App: React.FC = () => {
 
 				mapName: null,
 
-				playerPostion: null,
-				ghostPositions: null,
+				pawnPositions: [],
 			},
 			specifics: {
 				gameField: [],
@@ -43,13 +48,15 @@ export const App: React.FC = () => {
 				mapName: saveName.value,
 				width: parseInt(upliftedIds[0]),
 				height: parseInt(upliftedIds[1]),
+
+				pawnPositions: JSON.parse(upliftedIds[2]) as pawn[],
 			},
 			specifics: {
 				gameField: [],
 			},
 		};
 
-		for (let i = 2; i < upliftedIds.length; i++) {
+		for (let i = 3; i < upliftedIds.length; i++) {
 			const fieldType: FieldTypes =
 				document.getElementById(upliftedIds[i]).className ===
 				'Div-field--wall'
@@ -100,82 +107,100 @@ export const App: React.FC = () => {
 
 	return (
 		<div className="Main">
-			<GameField
-				width={dimensionWidth}
-				height={dimensionHeight}
-				className="GameField"
-				gamefieldInformation={gameFieldInformation}
-				liftInformationUp={(e) => upliftedIds.push(e)}
-			/>
-			<div style={{ marginLeft: '20px' }}>
-				<div
-					style={{
-						display: 'flex',
-						marginBottom: '25px',
-					}}
-				>
-					<Button
-						className="Button"
-						onClick={() => {
-							const width = (
-								document.getElementById(
-									'width',
-								)! as HTMLInputElement
-							).value;
-							const height = (
-								document.getElementById(
-									'height',
-								)! as HTMLInputElement
-							).value;
-
-							setDimensions([parseInt(width), parseInt(height)]);
+			<DndProvider backend={HTML5Backend}>
+				<GameField
+					width={dimensionWidth}
+					height={dimensionHeight}
+					className="GameField"
+					gamefieldInformation={gameFieldInformation}
+					liftInformationUp={(e) => upliftedIds.push(e)}
+					setGameFieldInformation={(e) =>
+						setGameFieldInformation(JSON.parse(JSON.stringify(e)))
+					}
+				/>
+				<div style={{ marginLeft: '20px' }}>
+					<div
+						style={{
+							display: 'flex',
+							marginBottom: '25px',
 						}}
 					>
-						Apply
-					</Button>
+						<Button
+							className="Button"
+							onClick={() => {
+								const width = (
+									document.getElementById(
+										'width',
+									)! as HTMLInputElement
+								).value;
+								const height = (
+									document.getElementById(
+										'height',
+									)! as HTMLInputElement
+								).value;
 
-					<input
-						style={{ marginLeft: '15px' }}
-						type={'number'}
-						placeholder={'width'}
-						id={'width'}
-					/>
-					<input
-						style={{ marginLeft: '15px' }}
-						type={'number'}
-						placeholder={'height'}
-						id={'height'}
-					/>
-				</div>
-				<div
-					style={{
-						display: 'flex',
-					}}
-				>
-					<Button onClick={onSave} className="Button">
-						Save
-					</Button>
+								setDimensions([
+									parseInt(width),
+									parseInt(height),
+								]);
+							}}
+						>
+							Apply
+						</Button>
 
-					<input
-						style={{ marginLeft: '15px' }}
-						placeholder="SaveName"
-						id="saveNameInput"
-						type="text"
+						<input
+							style={{ marginLeft: '15px' }}
+							type={'number'}
+							placeholder={'width'}
+							id={'width'}
+						/>
+						<input
+							style={{ marginLeft: '15px' }}
+							type={'number'}
+							placeholder={'height'}
+							id={'height'}
+						/>
+					</div>
+					<div
+						style={{
+							display: 'flex',
+						}}
+					>
+						<Button onClick={onSave} className="Button">
+							Save
+						</Button>
+
+						<input
+							style={{ marginLeft: '15px' }}
+							placeholder="SaveName"
+							id="saveNameInput"
+							type="text"
+						/>
+					</div>
+
+					<DragStartContainer
+						className={'List'}
+						gamefieldInformation={gameFieldInformation}
 					/>
+
+					<List
+						clickHandler={(element) => listClickHandler(element)}
+						className={'List'}
+					/>
+					<Button
+						onClick={() => {
+							if (!gameFieldInformation.globals.mapName) {
+								alert('No Map selected!');
+								return;
+							}
+							new GameManager(gameFieldInformation);
+						}}
+						className={'CreateGameButton'}
+					>
+						Create Game
+					</Button>
 				</div>
-				<List
-					clickHandler={(element) => listClickHandler(element)}
-					className={'List'}
-				/>
-				<Button
-					onClick={() => {
-						new GameManager(gameFieldInformation);
-					}}
-					className={'CreateGameButton'}
-				>
-					Create Game
-				</Button>
-			</div>
+			</DndProvider>
 		</div>
 	);
 };

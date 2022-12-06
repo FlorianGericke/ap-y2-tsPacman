@@ -1,4 +1,4 @@
-import { field, ghostPosition, playerPostion } from './Types';
+import { field, pawn } from './Types';
 
 export interface TransferInterface {
 	globals: {
@@ -6,8 +6,7 @@ export interface TransferInterface {
 		width: number;
 		height: number;
 
-		playerPostion?: playerPostion;
-		ghostPositions?: ghostPosition[];
+		pawnPositions?: pawn[];
 	};
 	specifics: {
 		gameField: field[];

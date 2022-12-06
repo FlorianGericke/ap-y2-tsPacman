@@ -1,7 +1,12 @@
 import { FieldTypes } from '../game/field/FieldTypes';
+import { PawnTypes } from './PawnTypes';
 
-export type playerPostion = number;
-export type ghostPosition = { id: number; position: number };
+export type pawn = {
+	type: PawnTypes;
+	spawn?: string;
+	position?: string;
+};
+
 export type field = {
 	id: string;
 	fieldType: FieldTypes;

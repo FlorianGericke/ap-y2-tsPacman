@@ -4,6 +4,9 @@ import './scss/GameField.scss';
 import { koordinateToId } from '../../../transfers/ProjectUtils';
 import { TransferInterface } from '../../../transfers/TransferInterface';
 import { FieldTypes } from '../../../game/field/FieldTypes';
+import { PawnTypes } from '../../../transfers/PawnTypes';
+import { pawn } from '../../../transfers/Types';
+import { spawn } from 'child_process';
 
 interface GameField {
 	width: number;
@@ -11,18 +14,35 @@ interface GameField {
 	fieldSize?: number;
 	className?: string;
 	gamefieldInformation: TransferInterface;
+	setGameFieldInformation: (gameFieldInformation: TransferInterface) => void;
 	liftInformationUp: (id: string) => void;
 }
 
 export const GameField: React.FC<GameField> = (props) => {
+	function setSpawn(type: PawnTypes, id: string) {
+		if (
+			!props.gamefieldInformation.globals.pawnPositions.find(
+				(p: pawn) => p.type === type,
+			)
+		) {
+			props.gamefieldInformation.globals.pawnPositions.push({
+				type: type,
+				spawn: id,
+				position: id,
+			});
+		}
+		props.setGameFieldInformation(props.gamefieldInformation);
+	}
 	const fieldSize = props.fieldSize;
 
 	const width = props.gamefieldInformation.globals.width ?? props.width;
 	const height = props.gamefieldInformation.globals.height ?? props.height;
 	const fields = props.gamefieldInformation.specifics.gameField;
+	const pawnPositions = props.gamefieldInformation.globals.pawnPositions;
 
 	props.liftInformationUp(width.toString());
 	props.liftInformationUp(height.toString());
+	props.liftInformationUp(JSON.stringify(pawnPositions));
 
 	if (width > 100 || width < 0) {
 		throw new Error('width must be greater than zero and smaller than 100');
@@ -39,16 +59,24 @@ export const GameField: React.FC<GameField> = (props) => {
 
 			const field = fields.find((field) => field!.id == key);
 			let isPath = false;
+			let isOcupiedPawnId: PawnTypes | null = null;
+
 			if (field) {
 				isPath = field.fieldType === FieldTypes.PATH;
 			}
+
+			isOcupiedPawnId =
+				pawnPositions.find((p) => p.position === koordinateToId(x, y))
+					?.type ?? null;
 
 			row.push(
 				<Field
 					isPath={isPath}
 					id={key}
+					setOccupiedPawnType={isOcupiedPawnId}
 					size={fieldSize}
 					key={parseInt(key)}
+					setSpawn={setSpawn}
 				/>,
 			);
 

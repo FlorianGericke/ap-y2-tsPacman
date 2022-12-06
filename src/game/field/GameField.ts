@@ -21,15 +21,15 @@ export default class GameField {
 		);
 
 		for (let y = 0; y < _uiInformation.globals.height!; y++) {
-			let walker = this.getFieldFromKoordinates(0, y) as Field;
+			let walker = this.getFieldFromCoordinates(0, y) as Field;
 			for (let x = 1; x < _uiInformation.globals.width!; x++) {
 				walker.setRight(
 					new Field(
 						koordinateToId(x, y),
-						y > 0 ? this.getFieldFromKoordinates(x, y - 1) : null,
+						y > 0 ? this.getFieldFromCoordinates(x, y - 1) : null,
 						null,
 						null,
-						this.getFieldFromKoordinates(x - 1, y),
+						this.getFieldFromCoordinates(x - 1, y),
 						_uiInformation.specifics.gameField!.find(
 							(e) => e!.id === koordinateToId(x, y),
 						)!.fieldType,
@@ -37,19 +37,19 @@ export default class GameField {
 				);
 				if (y !== 0) {
 					(walker.getRight()?.getUpper() as Field)?.setLower(
-						this.getFieldFromKoordinates(x, y) as Field,
+						this.getFieldFromCoordinates(x, y) as Field,
 					);
 				}
 				walker = walker.getRight() as Field;
 			}
-			walker = this.getFieldFromKoordinates(0, y) as Field;
+			walker = this.getFieldFromCoordinates(0, y) as Field;
 			if (y === _uiInformation.globals.height! - 1) {
 				continue;
 			}
 			walker.setLower(
 				new Field(
 					koordinateToId(0, y + 1),
-					this.getFieldFromKoordinates(0, y),
+					this.getFieldFromCoordinates(0, y),
 					null,
 					null,
 					null,
@@ -65,7 +65,7 @@ export default class GameField {
 		const re = [];
 		for (let y = 0; y < this._uiInformation.globals.height!; y++) {
 			for (let x = 0; x < this._uiInformation.globals.width!; x++) {
-				re.push(this.getFieldFromKoordinates(x, y));
+				re.push(this.getFieldFromCoordinates(x, y));
 			}
 		}
 
@@ -76,13 +76,13 @@ export default class GameField {
 		for (let y = 0; y < this._uiInformation.globals.height!; y++) {
 			let line = '';
 			for (let x = 0; x < this._uiInformation.globals.width!; x++) {
-				line += this.getFieldFromKoordinates(x, y)?.toLetter(showNum);
+				line += this.getFieldFromCoordinates(x, y)?.toLetter(showNum);
 			}
 			console.log(line);
 		}
 	}
 
-	getFieldFromKoordinates(x: number, y: number): Fieldable | null {
+	getFieldFromCoordinates(x: number, y: number): Fieldable | null {
 		let walker = this._root;
 		for (let i = 0; i < y; i++) {
 			if (walker.getLower() !== null) {

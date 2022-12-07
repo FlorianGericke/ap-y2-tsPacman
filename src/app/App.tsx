@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { GameField } from './components/gameField/GameField';
+import { GameField } from './components/gameFieldComponents/gameField/GameField';
 import './styles/scss/App.scss';
 import { Button } from './components/button/Button';
 import { List } from './components/list/List';
 import { TransferInterface } from '../transfers/TransferInterface';
 import { FieldTypes } from '../game/field/FieldTypes';
 import { GameManager } from '../game/gameManager/GameManager';
-import { DragStartContainer } from './components/spawnDragables/DragStartContainer';
+import { DragStartContainer } from './components/gameFieldComponents/spawnDragables/DragStartContainer';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { pawn } from '../transfers/Types';

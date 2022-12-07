@@ -1,9 +1,10 @@
 import React from 'react';
-import './scss/DrafStartContainer.scss';
 import { Draggable } from './Draggable';
-import { PawnTypes } from '../../../transfers/PawnTypes';
-import { TransferInterface } from '../../../transfers/TransferInterface';
-import { Button } from '../button/Button';
+import { PawnTypes } from '../../../../transfers/PawnTypes';
+import { TransferInterface } from '../../../../transfers/TransferInterface';
+import { Button } from '../../button/Button';
+
+import './scss/DrafStartContainer.scss';
 
 interface DragStartContainer {
 	gameFieldInformation: TransferInterface;

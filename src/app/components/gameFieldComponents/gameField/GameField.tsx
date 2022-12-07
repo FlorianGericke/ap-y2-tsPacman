@@ -1,13 +1,13 @@
 import React from 'react';
 import { Field } from './Field';
 import './scss/GameField.scss';
-import { koordinateToId } from '../../../transfers/ProjectUtils';
-import { TransferInterface } from '../../../transfers/TransferInterface';
-import { FieldTypes } from '../../../game/field/FieldTypes';
-import { PawnTypes } from '../../../transfers/PawnTypes';
-import { pawn } from '../../../transfers/Types';
-import { GamePhase } from '../../../transfers/GamePhase';
-import GamePhaseError from '../../../transfers/GamePhaseError';
+import { koordinateToId } from '../../../../transfers/ProjectUtils';
+import { TransferInterface } from '../../../../transfers/TransferInterface';
+import { FieldTypes } from '../../../../game/field/FieldTypes';
+import { PawnTypes } from '../../../../transfers/PawnTypes';
+import { pawn } from '../../../../transfers/Types';
+import { GamePhase } from '../../../../transfers/GamePhase';
+import GamePhaseError from '../../../../transfers/GamePhaseError';
 
 interface GameField {
 	width: number;

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import './scss/Field.scss';
-import { PawnTypes } from '../../../transfers/PawnTypes';
+import { PawnTypes } from '../../../../transfers/PawnTypes';
 import { useDrop } from 'react-dnd';
-import { GamePhase } from '../../../transfers/GamePhase';
+import { GamePhase } from '../../../../transfers/GamePhase';
 
 export const Field: React.FC<{
 	id: string;

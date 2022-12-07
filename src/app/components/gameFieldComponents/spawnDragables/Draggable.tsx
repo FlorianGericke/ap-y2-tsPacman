@@ -1,5 +1,5 @@
 import React from 'react';
-import { PawnTypes } from '../../../transfers/PawnTypes';
+import { PawnTypes } from '../../../../transfers/PawnTypes';
 import { useDrag } from 'react-dnd';
 
 interface Draggable {

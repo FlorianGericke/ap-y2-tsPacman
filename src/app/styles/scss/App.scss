@@ -13,8 +13,12 @@ body{
 
 .GameField{
   width: fit-content;
+}
 
-
+input{
+  margin-Left: 15px;
+  border: 1px solid black;
+  border-radius: 5px;
 }
 
 .Button{
@@ -22,8 +26,16 @@ body{
   width: 100px
 }
 
+.DragableList{
+  margin-top: 25px;
+}
+
 .List{
   margin-top: 25px;
+  height: 390px;
+  overflow-y: auto;
+  border: 1px solid black;
+  border-radius: 10px;
 }
 
 .CreateGameButton{

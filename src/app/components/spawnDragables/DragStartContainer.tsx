@@ -6,8 +6,8 @@ import { TransferInterface } from '../../../transfers/TransferInterface';
 import { Button } from '../button/Button';
 
 interface DragStartContainer {
+	gameFieldInformation: TransferInterface;
 	className?: string;
-	gamefieldInformation: TransferInterface;
 	resetButtonClick?: () => void;
 }
 
@@ -25,19 +25,19 @@ export const DragStartContainer: React.FC<DragStartContainer> = (props) => {
 					</Button>
 				</div>
 				<div className={'Div-DragStartContainer'}>
-					{!props.gamefieldInformation.globals.pawnPositions.find(
+					{!props.gameFieldInformation.globals.pawnPositions?.find(
 						(p) => p.type === PawnTypes.Yellow,
 					)?.spawn && <Draggable type={PawnTypes.Yellow} />}
-					{!props.gamefieldInformation.globals.pawnPositions.find(
+					{!props.gameFieldInformation.globals.pawnPositions?.find(
 						(p) => p.type === PawnTypes.Red,
 					)?.spawn && <Draggable type={PawnTypes.Red} />}
-					{!props.gamefieldInformation.globals.pawnPositions.find(
+					{!props.gameFieldInformation.globals.pawnPositions?.find(
 						(p) => p.type === PawnTypes.Pink,
 					)?.spawn && <Draggable type={PawnTypes.Pink} />}
-					{!props.gamefieldInformation.globals.pawnPositions.find(
+					{!props.gameFieldInformation.globals.pawnPositions?.find(
 						(p) => p.type === PawnTypes.Cyan,
 					)?.spawn && <Draggable type={PawnTypes.Cyan} />}
-					{!props.gamefieldInformation.globals.pawnPositions.find(
+					{!props.gameFieldInformation.globals.pawnPositions?.find(
 						(p) => p.type === PawnTypes.Orange,
 					)?.spawn && <Draggable type={PawnTypes.Orange} />}
 				</div>

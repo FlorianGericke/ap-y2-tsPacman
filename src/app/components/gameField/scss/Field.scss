@@ -7,20 +7,32 @@
   justify-content: center;
   align-items: center;
 
-  &:hover {
-    opacity: .8;
-  }
+
+
 
   &--wall {
     @extend .Div-field;
     background: #ff3500;
     border: #ff3500 solid;
+    &--hover{
+      @extend .Div-field--wall;
+      &:hover {
+        opacity: .8;
+      }
+    }
   }
+
 
   &--path {
     @extend .Div-field;
     background: #D5AE77;
     border: #D5AE77 solid;
+    &--hover{
+      @extend .Div-field--path;
+      &:hover {
+        opacity: .8;
+      }
+    }
   }
 
   &--0 {

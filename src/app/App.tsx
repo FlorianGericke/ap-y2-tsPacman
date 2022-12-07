@@ -6,17 +6,17 @@ import { List } from './components/list/List';
 import { TransferInterface } from '../transfers/TransferInterface';
 import { FieldTypes } from '../game/field/FieldTypes';
 import { GameManager } from '../game/gameManager/GameManager';
-import { PawnTypes } from '../transfers/PawnTypes';
 import { DragStartContainer } from './components/spawnDragables/DragStartContainer';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { pawn } from '../transfers/Types';
-import { json } from 'stream/consumers';
+import { GamePhase } from '../transfers/GamePhase';
 
 export const App: React.FC = () => {
 	const [[dimensionWidth, dimensionHeight], setDimensions] = useState([
 		16, 16,
 	]);
+	const [gamePhase, setGamePhase] = useState<GamePhase>(GamePhase.CONFIG);
 	const [gameFieldInformation, setGameFieldInformation] =
 		useState<TransferInterface>({
 			globals: {
@@ -34,18 +34,10 @@ export const App: React.FC = () => {
 
 	const upliftedIds: string[] = [];
 
-	function onSave() {
-		const saveName = document.getElementById(
-			'saveNameInput',
-		) as HTMLInputElement;
-		if (!saveName.value) {
-			alert('Please enter a valid save name');
-			return;
-		}
-
-		const insertNewSaveMap: TransferInterface = {
+	function getLocalCopy(): TransferInterface {
+		const re: TransferInterface = {
 			globals: {
-				mapName: saveName.value,
+				mapName: null,
 				width: parseInt(upliftedIds[0]),
 				height: parseInt(upliftedIds[1]),
 
@@ -59,7 +51,36 @@ export const App: React.FC = () => {
 		for (let i = 3; i < upliftedIds.length; i++) {
 			const fieldType: FieldTypes =
 				document.getElementById(upliftedIds[i]).className ===
-				'Div-field--wall'
+				'Div-field--wall--hover'
+					? FieldTypes.WALL
+					: FieldTypes.PATH;
+
+			re.specifics.gameField.push({
+				id: upliftedIds[i],
+				fieldType: fieldType,
+				collected: false,
+			});
+		}
+		return re;
+	}
+
+	function onSave() {
+		const saveName = document.getElementById(
+			'saveNameInput',
+		) as HTMLInputElement;
+		if (!saveName.value) {
+			alert('Please enter a valid save name');
+			return;
+		}
+
+		const insertNewSaveMap = getLocalCopy();
+
+		insertNewSaveMap.globals.mapName = saveName.value;
+
+		for (let i = 3; i < upliftedIds.length; i++) {
+			const fieldType: FieldTypes =
+				document.getElementById(upliftedIds[i]).className ===
+				'Div-field--wall--hover'
 					? FieldTypes.WALL
 					: FieldTypes.PATH;
 
@@ -114,92 +135,99 @@ export const App: React.FC = () => {
 					className="GameField"
 					gamefieldInformation={gameFieldInformation}
 					liftInformationUp={(e) => upliftedIds.push(e)}
-					setGameFieldInformation={(e) =>
-						setGameFieldInformation(JSON.parse(JSON.stringify(e)))
-					}
+					setGameFieldInformation={(e) => {
+						const old = getLocalCopy();
+						old.globals.pawnPositions = e.globals.pawnPositions;
+						setGameFieldInformation(
+							JSON.parse(JSON.stringify(old)),
+						);
+					}}
+					gamePhase={gamePhase}
 				/>
-				<div style={{ marginLeft: '20px' }}>
-					<div
-						style={{
-							display: 'flex',
-							marginBottom: '25px',
-						}}
-					>
-						<Button
-							className="Button"
-							onClick={() => {
-								const width = (
-									document.getElementById(
-										'width',
-									)! as HTMLInputElement
-								).value;
-								const height = (
-									document.getElementById(
-										'height',
-									)! as HTMLInputElement
-								).value;
-
-								setDimensions([
-									parseInt(width),
-									parseInt(height),
-								]);
+				{gamePhase === GamePhase.CONFIG && (
+					<div style={{ marginLeft: '20px', height: 'fit-content' }}>
+						<div
+							style={{
+								display: 'flex',
+								marginBottom: '25px',
 							}}
 						>
-							Apply
-						</Button>
+							<Button
+								className="Button"
+								onClick={() => {
+									const width = (
+										document.getElementById(
+											'width',
+										)! as HTMLInputElement
+									).value;
+									const height = (
+										document.getElementById(
+											'height',
+										)! as HTMLInputElement
+									).value;
 
-						<input
-							style={{ marginLeft: '15px' }}
-							type={'number'}
-							placeholder={'width'}
-							id={'width'}
+									setDimensions([
+										parseInt(width),
+										parseInt(height),
+									]);
+								}}
+							>
+								Apply
+							</Button>
+
+							<input
+								type={'number'}
+								placeholder={'width'}
+								id={'width'}
+							/>
+							<input
+								type={'number'}
+								placeholder={'height'}
+								id={'height'}
+							/>
+						</div>
+						<div
+							style={{
+								display: 'flex',
+							}}
+						>
+							<Button onClick={onSave} className="Button">
+								Save
+							</Button>
+
+							<input
+								placeholder="SaveName"
+								id="saveNameInput"
+								type="text"
+							/>
+						</div>
+
+						<DragStartContainer
+							className={'DragableList'}
+							gamefieldInformation={gameFieldInformation}
 						/>
-						<input
-							style={{ marginLeft: '15px' }}
-							type={'number'}
-							placeholder={'height'}
-							id={'height'}
-						/>
-					</div>
-					<div
-						style={{
-							display: 'flex',
-						}}
-					>
-						<Button onClick={onSave} className="Button">
-							Save
-						</Button>
 
-						<input
-							style={{ marginLeft: '15px' }}
-							placeholder="SaveName"
-							id="saveNameInput"
-							type="text"
-						/>
-					</div>
-
-					<DragStartContainer
-						className={'List'}
-						gamefieldInformation={gameFieldInformation}
-					/>
-
-					<List
-						clickHandler={(element) => listClickHandler(element)}
-						className={'List'}
-					/>
-					<Button
-						onClick={() => {
-							if (!gameFieldInformation.globals.mapName) {
-								alert('No Map selected!');
-								return;
+						<List
+							clickHandler={(element) =>
+								listClickHandler(element)
 							}
-							new GameManager(gameFieldInformation);
-						}}
-						className={'CreateGameButton'}
-					>
-						Create Game
-					</Button>
-				</div>
+							className={'List'}
+						/>
+						<Button
+							onClick={() => {
+								if (!gameFieldInformation.globals.mapName) {
+									alert('No Map selected!');
+									return;
+								}
+								setGamePhase(GamePhase.PLAY);
+								new GameManager(gameFieldInformation);
+							}}
+							className={'CreateGameButton'}
+						>
+							Create Game
+						</Button>
+					</div>
+				)}
 			</DndProvider>
 		</div>
 	);

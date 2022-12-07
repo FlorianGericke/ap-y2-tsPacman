@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './scss/Field.scss';
 import { PawnTypes } from '../../../transfers/PawnTypes';
 import { useDrop } from 'react-dnd';
+import { GamePhase } from '../../../transfers/GamePhase';
 
 export const Field: React.FC<{
 	id: string;
@@ -9,6 +10,7 @@ export const Field: React.FC<{
 	size?: number;
 	setOccupiedPawnType?: PawnTypes;
 	setSpawn?: (type: PawnTypes, id: string) => void;
+	gamePhase: GamePhase;
 }> = (props) => {
 	const [isPath, setPath] = useState(props.isPath);
 
@@ -22,7 +24,12 @@ export const Field: React.FC<{
 
 	function getClassName() {
 		if (props.setOccupiedPawnType == null) {
-			return isPath ? 'Div-field--path' : 'Div-field--wall';
+			const hover = `${
+				props.gamePhase === GamePhase.CONFIG ? '--hover' : ''
+			}`;
+			return isPath
+				? `Div-field--path${hover}`
+				: `Div-field--wall${hover}`;
 		}
 		return `Div-field--${props.setOccupiedPawnType}`;
 	}

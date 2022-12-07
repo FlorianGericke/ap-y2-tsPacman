@@ -6,7 +6,8 @@ import { TransferInterface } from '../../../transfers/TransferInterface';
 import { FieldTypes } from '../../../game/field/FieldTypes';
 import { PawnTypes } from '../../../transfers/PawnTypes';
 import { pawn } from '../../../transfers/Types';
-import { spawn } from 'child_process';
+import { GamePhase } from '../../../transfers/GamePhase';
+import GamePhaseError from '../../../transfers/GamePhaseError';
 
 interface GameField {
 	width: number;
@@ -16,10 +17,16 @@ interface GameField {
 	gamefieldInformation: TransferInterface;
 	setGameFieldInformation: (gameFieldInformation: TransferInterface) => void;
 	liftInformationUp: (id: string) => void;
+	gamePhase: GamePhase;
 }
 
 export const GameField: React.FC<GameField> = (props) => {
 	function setSpawn(type: PawnTypes, id: string) {
+		if (props.gamePhase === GamePhase.PLAY) {
+			throw new GamePhaseError(
+				'Cannot setSpawn when gamePhase is GamePhase.PLAY',
+			);
+		}
 		if (
 			!props.gamefieldInformation.globals.pawnPositions.find(
 				(p: pawn) => p.type === type,
@@ -40,15 +47,21 @@ export const GameField: React.FC<GameField> = (props) => {
 	const fields = props.gamefieldInformation.specifics.gameField;
 	const pawnPositions = props.gamefieldInformation.globals.pawnPositions;
 
-	props.liftInformationUp(width.toString());
-	props.liftInformationUp(height.toString());
-	props.liftInformationUp(JSON.stringify(pawnPositions));
+	if (props.gamePhase === GamePhase.CONFIG) {
+		props.liftInformationUp(width.toString());
+		props.liftInformationUp(height.toString());
+		props.liftInformationUp(JSON.stringify(pawnPositions));
 
-	if (width > 100 || width < 0) {
-		throw new Error('width must be greater than zero and smaller than 100');
-	}
-	if (height > 100 || height < 0) {
-		throw new Error('width must be greater than zero and smaller than 100');
+		if (width > 100 || width < 0) {
+			throw new Error(
+				'width must be greater than zero and smaller than 100',
+			);
+		}
+		if (height > 100 || height < 0) {
+			throw new Error(
+				'width must be greater than zero and smaller than 100',
+			);
+		}
 	}
 
 	const colum = [];
@@ -77,10 +90,12 @@ export const GameField: React.FC<GameField> = (props) => {
 					size={fieldSize}
 					key={parseInt(key)}
 					setSpawn={setSpawn}
+					gamePhase={props.gamePhase}
 				/>,
 			);
-
-			props.liftInformationUp(koordinateToId(x, y));
+			if (props.gamePhase === GamePhase.CONFIG) {
+				props.liftInformationUp(koordinateToId(x, y));
+			}
 		}
 		colum.push(row);
 	}

@@ -3,6 +3,13 @@
   border-radius: 10px;
   padding: 10px;
   height: 110px;
+  .DragContainerHeader{
+    display: flex;
+    .ResetButton{
+      margin-left: 40px;
+      font-size: .9rem
+    }
+  }
   .Div-DragStartContainer{
     display: flex;
     width: 100%;

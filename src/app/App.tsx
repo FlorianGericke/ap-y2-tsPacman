@@ -205,6 +205,11 @@ export const App: React.FC = () => {
 						<DragStartContainer
 							className={'DragableList'}
 							gamefieldInformation={gameFieldInformation}
+							resetButtonClick={() => {
+								const old = getLocalCopy();
+								old.globals.pawnPositions = [];
+								setGameFieldInformation(old);
+							}}
 						/>
 
 						<List

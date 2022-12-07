@@ -3,17 +3,27 @@ import './scss/DrafStartContainer.scss';
 import { Draggable } from './Draggable';
 import { PawnTypes } from '../../../transfers/PawnTypes';
 import { TransferInterface } from '../../../transfers/TransferInterface';
+import { Button } from '../button/Button';
 
 interface DragStartContainer {
 	className?: string;
 	gamefieldInformation: TransferInterface;
+	resetButtonClick?: () => void;
 }
 
 export const DragStartContainer: React.FC<DragStartContainer> = (props) => {
 	return (
 		<div className={props.className}>
 			<div className={'Div-DragContainer'}>
-				<p>Drag an Drop Pawn spawn into the Gamefield</p>
+				<div className={'DragContainerHeader'}>
+					<p>Drag an Drop Pawn spawn into the Gamefield</p>
+					<Button
+						className={'ResetButton'}
+						onClick={props.resetButtonClick}
+					>
+						Reset
+					</Button>
+				</div>
 				<div className={'Div-DragStartContainer'}>
 					{!props.gamefieldInformation.globals.pawnPositions.find(
 						(p) => p.type === PawnTypes.Yellow,

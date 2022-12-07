@@ -1,8 +1,9 @@
-.Div-List {
+.Div-ListItems {
   display: flex;
   flex-direction: column;
+  background-color: black;
 
-  .Div-ListItems {
+  .Div-ListItem {
     text-align: center;
 
     border-bottom:  1px solid black;
@@ -14,16 +15,9 @@
     background-color: white;
     padding: 0.5rem;
 
-
-
     &--active {
-      @extend .Div-ListItems;
+      @extend .Div-ListItem;
       opacity: .9;
-    }
-
-
-    &:last-child {
-      border-bottom: none;
     }
   }
 }

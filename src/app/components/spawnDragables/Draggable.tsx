@@ -4,6 +4,7 @@ import { useDrag } from 'react-dnd';
 
 interface Draggable {
 	type: PawnTypes;
+	className?: string;
 }
 
 export const Draggable: React.FC<Draggable> = (props) => {
@@ -18,14 +19,14 @@ export const Draggable: React.FC<Draggable> = (props) => {
 	return (
 		<div
 			ref={drag}
+			className={props.className}
 			style={{
 				opacity: isDragging ? 0.5 : 1,
-				fontSize: 25,
-				fontWeight: 'bold',
-				cursor: 'move',
 			}}
 		>
-			<div className={`Div-field--${props.type}`}></div>
+			<div
+				className={`Div-field--${props.type}`} // using Style from Game-field/Field StyleSheet
+			></div>
 		</div>
 	);
 };

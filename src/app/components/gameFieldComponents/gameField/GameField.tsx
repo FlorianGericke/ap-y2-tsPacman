@@ -5,7 +5,7 @@ import { koordinateToId } from '../../../../transfers/ProjectUtils';
 import { TransferInterface } from '../../../../transfers/TransferInterface';
 import { FieldTypes } from '../../../../game/field/FieldTypes';
 import { PawnTypes } from '../../../../transfers/PawnTypes';
-import { pawn } from '../../../../transfers/Types';
+import { field, pawn } from '../../../../transfers/Types';
 import { GamePhase } from '../../../../transfers/GamePhase';
 import GamePhaseError from '../../../../transfers/GamePhaseError';
 
@@ -14,7 +14,7 @@ interface GameField {
 	height: number;
 	fieldSize?: number;
 	className?: string;
-	gamefieldInformation: TransferInterface;
+	gameFieldInformation: TransferInterface;
 	setGameFieldInformation: (gameFieldInformation: TransferInterface) => void;
 	liftInformationUp: (id: string) => void;
 	gamePhase: GamePhase;
@@ -28,24 +28,24 @@ export const GameField: React.FC<GameField> = (props) => {
 			);
 		}
 		if (
-			!props.gamefieldInformation.globals.pawnPositions.find(
+			!props.gameFieldInformation.globals.pawnPositions?.find(
 				(p: pawn) => p.type === type,
 			)
 		) {
-			props.gamefieldInformation.globals.pawnPositions.push({
+			props.gameFieldInformation.globals.pawnPositions?.push({
 				type: type,
 				spawn: id,
 				position: id,
 			});
 		}
-		props.setGameFieldInformation(props.gamefieldInformation);
+		props.setGameFieldInformation(props.gameFieldInformation);
 	}
 	const fieldSize = props.fieldSize;
 
-	const width = props.gamefieldInformation.globals.width ?? props.width;
-	const height = props.gamefieldInformation.globals.height ?? props.height;
-	const fields = props.gamefieldInformation.specifics.gameField;
-	const pawnPositions = props.gamefieldInformation.globals.pawnPositions;
+	const width = props.gameFieldInformation.globals.width ?? props.width;
+	const height = props.gameFieldInformation.globals.height ?? props.height;
+	const fields = props.gameFieldInformation.specifics.gameField;
+	const pawnPositions = props.gameFieldInformation.globals.pawnPositions;
 
 	if (props.gamePhase === GamePhase.CONFIG) {
 		props.liftInformationUp(width.toString());
@@ -70,23 +70,23 @@ export const GameField: React.FC<GameField> = (props) => {
 		for (let x = 0; x < width; x++) {
 			const key = koordinateToId(x, y);
 
-			const field = fields.find((field) => field!.id == key);
+			const field = fields?.find((field: field) => field?.id == key);
 			let isPath = false;
-			let isOcupiedPawnId: PawnTypes | null = null;
+			let isOccupiedPawnId: PawnTypes | null = null;
 
 			if (field) {
 				isPath = field.fieldType === FieldTypes.PATH;
 			}
 
-			isOcupiedPawnId =
-				pawnPositions.find((p) => p.position === koordinateToId(x, y))
+			isOccupiedPawnId =
+				pawnPositions?.find((p) => p.position === koordinateToId(x, y))
 					?.type ?? null;
 
 			row.push(
 				<Field
 					isPath={isPath}
 					id={key}
-					setOccupiedPawnType={isOcupiedPawnId}
+					setOccupiedPawnType={isOccupiedPawnId ?? null}
 					size={fieldSize}
 					key={parseInt(key)}
 					setSpawn={setSpawn}

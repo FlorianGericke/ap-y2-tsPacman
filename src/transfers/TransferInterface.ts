@@ -2,13 +2,13 @@ import { field, pawn } from './Types';
 
 export interface TransferInterface {
 	globals: {
-		mapName: string;
-		width: number;
-		height: number;
+		mapName: string | null;
+		width: number | null;
+		height: number | null;
 
-		pawnPositions?: pawn[];
+		pawnPositions: pawn[] | null;
 	};
 	specifics: {
-		gameField: field[];
+		gameField: field[] | null;
 	};
 }

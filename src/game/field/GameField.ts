@@ -1,28 +1,34 @@
 import { TransferInterface } from '../../transfers/TransferInterface';
 import Field from './Field';
-import { FieldTypes } from './FieldTypes';
-import { field } from '../../transfers/Types';
 import { Fieldable } from './Fieldable';
-import { idToKoordinate, koordinateToId } from '../../transfers/ProjectUtils';
+import { koordinateToId } from '../../transfers/ProjectUtils';
+import { field } from '../../transfers/Types';
+import { FieldTypes } from './FieldTypes';
 
 export default class GameField {
-	private _root: Field;
+	private readonly _root: Field;
 
 	constructor(private _uiInformation: TransferInterface) {
+		if (!_uiInformation) {
+			throw new Error(
+				'GameField needs uiInformation object to be initialized',
+			);
+		}
+		if (!_uiInformation.specifics.gameField) {
+			throw new Error('GameField needs uiInformation with gameFields');
+		}
 		this._root = new Field(
 			koordinateToId(0, 0),
 			null,
 			null,
 			null,
 			null,
-			_uiInformation.specifics.gameField!.find(
-				(e) => e!.id === koordinateToId(0, 0),
-			)!.fieldType,
+			this._getFieldTypeFromUiInformation(0, 0),
 		);
 
-		for (let y = 0; y < _uiInformation.globals.height!; y++) {
+		for (let y = 0; y < (_uiInformation.globals.height ?? 0); y++) {
 			let walker = this.getFieldFromCoordinates(0, y) as Field;
-			for (let x = 1; x < _uiInformation.globals.width!; x++) {
+			for (let x = 1; x < (_uiInformation.globals.width ?? 0); x++) {
 				walker.setRight(
 					new Field(
 						koordinateToId(x, y),
@@ -30,9 +36,7 @@ export default class GameField {
 						null,
 						null,
 						this.getFieldFromCoordinates(x - 1, y),
-						_uiInformation.specifics.gameField!.find(
-							(e) => e!.id === koordinateToId(x, y),
-						)!.fieldType,
+						this._getFieldTypeFromUiInformation(x, y),
 					),
 				);
 				if (y !== 0) {
@@ -43,7 +47,7 @@ export default class GameField {
 				walker = walker.getRight() as Field;
 			}
 			walker = this.getFieldFromCoordinates(0, y) as Field;
-			if (y === _uiInformation.globals.height! - 1) {
+			if (y === (_uiInformation.globals.height ?? 0) - 1) {
 				continue;
 			}
 			walker.setLower(
@@ -53,9 +57,7 @@ export default class GameField {
 					null,
 					null,
 					null,
-					_uiInformation.specifics.gameField!.find(
-						(e) => e!.id === koordinateToId(0, y + 1),
-					)!.fieldType,
+					this._getFieldTypeFromUiInformation(0, y + 1),
 				),
 			);
 		}
@@ -63,8 +65,8 @@ export default class GameField {
 
 	toArray() {
 		const re = [];
-		for (let y = 0; y < this._uiInformation.globals.height!; y++) {
-			for (let x = 0; x < this._uiInformation.globals.width!; x++) {
+		for (let y = 0; y < (this._uiInformation.globals.height ?? 0); y++) {
+			for (let x = 0; x < (this._uiInformation.globals.width ?? 0); x++) {
 				re.push(this.getFieldFromCoordinates(x, y));
 			}
 		}
@@ -73,9 +75,9 @@ export default class GameField {
 	}
 
 	printInConsole(showNum: boolean) {
-		for (let y = 0; y < this._uiInformation.globals.height!; y++) {
+		for (let y = 0; y < (this._uiInformation.globals.height ?? 0); y++) {
 			let line = '';
-			for (let x = 0; x < this._uiInformation.globals.width!; x++) {
+			for (let x = 0; x < (this._uiInformation.globals.width ?? 0); x++) {
 				line += this.getFieldFromCoordinates(x, y)?.toLetter(showNum);
 			}
 			console.log(line);
@@ -88,16 +90,38 @@ export default class GameField {
 			if (walker.getLower() !== null) {
 				walker = walker.getLower() as Field;
 			} else {
-				null;
+				return null;
 			}
 		}
 		for (let i = 0; i < x; i++) {
 			if (walker.getRight() !== null) {
 				walker = walker.getRight() as Field;
 			} else {
-				null;
+				return null;
 			}
 		}
 		return walker;
+	}
+
+	private _getFieldTypeFromUiInformation(x: number, y: number): FieldTypes {
+		if (!this._uiInformation.specifics.gameField) {
+			throw new Error('GameField needs uiInformation with gameFields');
+		}
+
+		const fields: field[] = this._uiInformation.specifics.gameField;
+
+		const field: field | null =
+			fields.find((field: field) => {
+				if (!field) {
+					throw new Error('a field must be specified');
+				}
+				return field.id === koordinateToId(x, y);
+			}) ?? null;
+
+		if (!field) {
+			throw new Error('a field must be specified');
+		}
+
+		return field.fieldType;
 	}
 }

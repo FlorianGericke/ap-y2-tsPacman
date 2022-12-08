@@ -4,23 +4,24 @@ import { PawnTypes } from '../../../../transfers/PawnTypes';
 import { useDrop } from 'react-dnd';
 import { GamePhase } from '../../../../transfers/GamePhase';
 
-export const Field: React.FC<{
+interface Field {
 	id: string;
 	isPath: boolean;
 	size?: number;
-	setOccupiedPawnType?: PawnTypes;
-	setSpawn?: (type: PawnTypes, id: string) => void;
+	setOccupiedPawnType: PawnTypes | null;
+	setSpawn: (type: PawnTypes, id: string) => void;
 	gamePhase: GamePhase;
-}> = (props) => {
+}
+
+export const Field: React.FC<Field> = (props) => {
 	const [isPath, setPath] = useState(props.isPath);
-
-	let style = {};
-
 	const [, drop] = useDrop(() => ({
 		accept: 'pawn',
 		drop: (item: { type: PawnTypes }) =>
 			props.setSpawn(item.type, props.id),
 	}));
+
+	let style = {};
 
 	function getClassName() {
 		if (props.setOccupiedPawnType == null) {
@@ -41,11 +42,15 @@ export const Field: React.FC<{
 		};
 	}
 
+	function fieldClickHandler() {
+		setPath(!isPath);
+	}
+
 	return (
 		<div ref={drop} style={{ backgroundColor: 'black' }}>
 			<div
 				id={props.id}
-				onClick={() => setPath(!isPath)}
+				onClick={fieldClickHandler}
 				className={getClassName()}
 				style={style}
 			>

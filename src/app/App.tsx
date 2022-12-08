@@ -55,12 +55,12 @@ export const App: React.FC = () => {
 
 		for (let i = 3; i < upliftedIds.length; i++) {
 			const fieldType: FieldTypes =
-				document.getElementById(upliftedIds[i]).className ===
+				document.getElementById(upliftedIds[i])?.className ===
 				'Div-field--wall--hover'
 					? FieldTypes.WALL
 					: FieldTypes.PATH;
 
-			re.specifics.gameField.push({
+			re.specifics.gameField?.push({
 				id: upliftedIds[i],
 				fieldType: fieldType,
 				collected: false,
@@ -82,12 +82,12 @@ export const App: React.FC = () => {
 		insertNewSaveMap.globals.mapName = saveName.value;
 		for (let i = 3; i < upliftedIds.length; i++) {
 			const fieldType: FieldTypes =
-				document.getElementById(upliftedIds[i]).className ===
+				document.getElementById(upliftedIds[i])?.className ===
 				'Div-field--wall--hover'
 					? FieldTypes.WALL
 					: FieldTypes.PATH;
 
-			insertNewSaveMap.specifics.gameField.push({
+			insertNewSaveMap.specifics.gameField?.push({
 				id: upliftedIds[i],
 				fieldType: fieldType,
 				collected: false,
@@ -107,16 +107,28 @@ export const App: React.FC = () => {
 	}
 
 	function listClickHandler(element: string) {
-		setGameFieldInformation(getLocalStoredMap(element));
+		setGameFieldInformation(
+			getLocalStoredMap(element) ?? gameFieldInformation,
+		);
 	}
 
 	function applyDimensionsButtonClickHandler() {
-		const width = (document.getElementById('width')! as HTMLInputElement)
-			.value;
-		const height = (document.getElementById('height')! as HTMLInputElement)
-			.value;
+		const widthInput: HTMLInputElement = document.getElementById(
+			'width',
+		) as HTMLInputElement;
 
-		setDimensions([parseInt(width), parseInt(height)]);
+		const heightInput: HTMLInputElement = document.getElementById(
+			'height',
+		) as HTMLInputElement;
+
+		if (!widthInput && !heightInput) {
+			throw new Error('width and height cannot be null');
+		}
+
+		setDimensions([
+			parseInt(widthInput.value),
+			parseInt(heightInput.value),
+		]);
 	}
 
 	function dragResetButtonClickHandler() {
@@ -141,7 +153,7 @@ export const App: React.FC = () => {
 					width={dimensionWidth}
 					height={dimensionHeight}
 					className="GameField"
-					gamefieldInformation={gameFieldInformation}
+					gameFieldInformation={gameFieldInformation}
 					liftInformationUp={(e) => upliftedIds.push(e)}
 					setGameFieldInformation={(e) => {
 						const old = getLocalCopy();

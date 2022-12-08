@@ -27,6 +27,8 @@ export const getIndexOfStoredMap = (
 	});
 };
 
-export const getLocalStoredMap = (name: string): TransferInterface => {
-	return getLocalStoredMaps().find((map) => map.globals.mapName === name);
+export const getLocalStoredMap = (name: string): TransferInterface | null => {
+	return (
+		getLocalStoredMaps().find((map) => map.globals.mapName === name) ?? null
+	);
 };

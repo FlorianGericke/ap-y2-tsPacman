@@ -43,7 +43,7 @@ export const List: React.FC<Listable> = (props) => {
 
 	const mapNames: string[] = [];
 	for (let i = 0; i < savedMaps.length; i++) {
-		mapNames.push(savedMaps[i].globals.mapName);
+		mapNames.push(savedMaps[i].globals.mapName ?? '');
 	}
 	elements = arrayToDivs(mapNames);
 

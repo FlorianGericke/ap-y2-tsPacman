@@ -5,11 +5,3 @@ export enum PawnTypes {
 	Cyan,
 	Orange,
 }
-
-export const ItemTypes = {
-	Yellow: PawnTypes.Yellow,
-	Red: PawnTypes.Red,
-	Pink: PawnTypes.Pink,
-	Cyan: PawnTypes.Cyan,
-	Orange: PawnTypes.Orange,
-};

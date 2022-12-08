@@ -11,6 +11,11 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { pawn } from '../transfers/Types';
 import { GamePhase } from '../transfers/GamePhase';
+import {
+	getIndexOfStoredMap,
+	getLocalStoredMap,
+	getLocalStoredMaps,
+} from '../transfers/ProjectUtils';
 
 export const App: React.FC = () => {
 	const [[dimensionWidth, dimensionHeight], setDimensions] = useState([
@@ -74,9 +79,7 @@ export const App: React.FC = () => {
 		}
 
 		const insertNewSaveMap = getLocalCopy();
-
 		insertNewSaveMap.globals.mapName = saveName.value;
-
 		for (let i = 3; i < upliftedIds.length; i++) {
 			const fieldType: FieldTypes =
 				document.getElementById(upliftedIds[i]).className ===
@@ -91,17 +94,8 @@ export const App: React.FC = () => {
 			});
 		}
 
-		const localStorageValue: string | null =
-			localStorage.getItem('savedMaps');
-
-		const savedMaps: TransferInterface[] = localStorageValue
-			? (JSON.parse(localStorageValue) as TransferInterface[])
-			: (JSON.parse('[]') as TransferInterface[]);
-
-		const index = savedMaps.findIndex((map) => {
-			return map.globals.mapName === insertNewSaveMap.globals.mapName;
-		});
-
+		const savedMaps = getLocalStoredMaps();
+		const index = getIndexOfStoredMap(insertNewSaveMap);
 		if (index !== -1) {
 			savedMaps[index] = insertNewSaveMap;
 		} else {
@@ -113,17 +107,31 @@ export const App: React.FC = () => {
 	}
 
 	function listClickHandler(element: string) {
-		console.log(element);
-		const localStorageValue: string | null =
-			localStorage.getItem('savedMaps');
+		setGameFieldInformation(getLocalStoredMap(element));
+	}
 
-		const savedMaps: TransferInterface[] = localStorageValue
-			? (JSON.parse(localStorageValue) as TransferInterface[])
-			: (JSON.parse('[]') as TransferInterface[]);
+	function applyDimensionsButtonClickHandler() {
+		const width = (document.getElementById('width')! as HTMLInputElement)
+			.value;
+		const height = (document.getElementById('height')! as HTMLInputElement)
+			.value;
 
-		const i = savedMaps.find((map) => map.globals.mapName === element);
+		setDimensions([parseInt(width), parseInt(height)]);
+	}
 
-		setGameFieldInformation(i);
+	function dragResetButtonClickHandler() {
+		const old = getLocalCopy();
+		old.globals.pawnPositions = [];
+		setGameFieldInformation(old);
+	}
+
+	function createGameButtonClickHandler() {
+		if (!gameFieldInformation.globals.mapName) {
+			alert('No Map selected!');
+			return;
+		}
+		setGamePhase(GamePhase.PLAY);
+		new GameManager(gameFieldInformation);
 	}
 
 	return (
@@ -145,57 +153,38 @@ export const App: React.FC = () => {
 					gamePhase={gamePhase}
 				/>
 				{gamePhase === GamePhase.CONFIG && (
-					<div style={{ marginLeft: '20px', height: 'fit-content' }}>
-						<div
-							style={{
-								display: 'flex',
-								marginBottom: '25px',
-							}}
-						>
+					<div className={'ConfigurationContainer'}>
+						<div className={'ConfigurationContainer--Column'}>
 							<Button
-								className="Button"
-								onClick={() => {
-									const width = (
-										document.getElementById(
-											'width',
-										)! as HTMLInputElement
-									).value;
-									const height = (
-										document.getElementById(
-											'height',
-										)! as HTMLInputElement
-									).value;
-
-									setDimensions([
-										parseInt(width),
-										parseInt(height),
-									]);
-								}}
+								className={'InputApplyButton'}
+								onClick={applyDimensionsButtonClickHandler}
 							>
 								Apply
 							</Button>
 
 							<input
+								className={'ConfigurationContainer--Input'}
 								type={'number'}
 								placeholder={'width'}
 								id={'width'}
 							/>
 							<input
+								className={'ConfigurationContainer--Input'}
 								type={'number'}
 								placeholder={'height'}
 								id={'height'}
 							/>
 						</div>
-						<div
-							style={{
-								display: 'flex',
-							}}
-						>
-							<Button onClick={onSave} className="Button">
+						<div className={'ConfigurationContainer--Column'}>
+							<Button
+								onClick={onSave}
+								className={'InputApplyButton'}
+							>
 								Save
 							</Button>
 
 							<input
+								className={'ConfigurationContainer--Input'}
 								placeholder="SaveName"
 								id="saveNameInput"
 								type="text"
@@ -203,30 +192,17 @@ export const App: React.FC = () => {
 						</div>
 
 						<DragStartContainer
-							className={'DragableList'}
+							className={'DraggableList'}
 							gameFieldInformation={gameFieldInformation}
-							resetButtonClick={() => {
-								const old = getLocalCopy();
-								old.globals.pawnPositions = [];
-								setGameFieldInformation(old);
-							}}
+							resetButtonClick={dragResetButtonClickHandler}
 						/>
 
 						<List
-							clickHandler={(element) =>
-								listClickHandler(element)
-							}
+							clickHandler={listClickHandler}
 							className={'List'}
 						/>
 						<Button
-							onClick={() => {
-								if (!gameFieldInformation.globals.mapName) {
-									alert('No Map selected!');
-									return;
-								}
-								setGamePhase(GamePhase.PLAY);
-								new GameManager(gameFieldInformation);
-							}}
+							onClick={createGameButtonClickHandler}
 							className={'CreateGameButton'}
 						>
 							Create Game

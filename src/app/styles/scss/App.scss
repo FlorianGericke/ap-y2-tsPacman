@@ -15,14 +15,9 @@ body{
   width: fit-content;
 }
 
-input{
-  margin-Left: 15px;
-  border: 1px solid black;
-  border-radius: 5px;
-}
 
-.Button{
-  //margin-left: 20px;
+
+.InputApplyButton{
   width: 100px
 }
 
@@ -36,6 +31,20 @@ input{
   overflow-y: auto;
   border: 1px solid black;
   border-radius: 10px;
+}
+
+.ConfigurationContainer{
+  margin-left: 20px;
+  height: fit-content;
+  .ConfigurationContainer--Column{
+    display: flex;
+    margin-bottom: 25px;
+    .ConfigurationContainer--Input{
+      margin-Left: 15px;
+      border: 1px solid black;
+      border-radius: 5px;
+    }
+  }
 }
 
 .CreateGameButton{

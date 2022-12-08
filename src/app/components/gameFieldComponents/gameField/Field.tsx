@@ -43,7 +43,9 @@ export const Field: React.FC<Field> = (props) => {
 	}
 
 	function fieldClickHandler() {
-		setPath(!isPath);
+		if (props.gamePhase === GamePhase.CONFIG) {
+			setPath(!isPath);
+		}
 	}
 
 	return (

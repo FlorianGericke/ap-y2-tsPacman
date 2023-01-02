@@ -1,7 +1,10 @@
-import { field } from '../../transfers/Types';
+import { Direction } from '../Direction';
+import { Fieldable } from '../field/Fieldable';
 
 export interface iMove {
-	getOrigin: () => field;
-	getDestination: () => field;
+	getActual: () => Fieldable;
+	getDirection: () => Direction;
+	getDestination: () => Fieldable;
 	toString: () => string;
+	equals: (other: iMove) => boolean;
 }

@@ -1,5 +1,5 @@
-import { Playerable } from '../player/playerable';
 import { FieldTypes } from './FieldTypes';
+import { Playerable } from '../player/Playerable';
 
 export interface Fieldable {
 	getUpper: () => Fieldable | null;
@@ -11,9 +11,10 @@ export interface Fieldable {
 
 	getFieldType: () => FieldTypes;
 	isOccupied: () => boolean;
-	isOccupiedFrom: () => Playerable;
+	isOccupiedFrom: () => Playerable | null;
+	setOccupier: (occupier: Playerable) => void;
 
-	equals: () => boolean;
+	equals: (other: Fieldable) => boolean;
 	toLetter: (showNum: boolean) => string;
 	toString: () => string;
 }

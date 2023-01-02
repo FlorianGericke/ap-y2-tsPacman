@@ -1,6 +1,7 @@
 import { Fieldable } from './Fieldable';
 import { FieldTypes } from './FieldTypes';
-import { Playerable } from '../player/playerable';
+import { Playerable } from '../player/Playerable';
+import { PawnTypes } from '../../transfers/PawnTypes';
 
 export default class Field implements Fieldable {
 	private _upper: Fieldable | null;
@@ -13,7 +14,9 @@ export default class Field implements Fieldable {
 
 	private _fieldType: FieldTypes;
 
-	private _id: string;
+	private _occupiedFrom: Playerable | null = null;
+
+	private readonly _id: string;
 
 	constructor(
 		id: string,
@@ -31,8 +34,8 @@ export default class Field implements Fieldable {
 		this._left = left;
 	}
 
-	equals(): boolean {
-		return false;
+	equals(other: Fieldable): boolean {
+		return this.toString() === other.toString();
 	}
 
 	getFieldType(): FieldTypes {
@@ -64,13 +67,15 @@ export default class Field implements Fieldable {
 	}
 
 	isOccupied(): boolean {
-		throw new Error('Not implemented yet');
-		// Return null;
+		return this._occupiedFrom !== null;
 	}
 
-	isOccupiedFrom(): Playerable {
-		throw new Error('Not implemented yet');
-		// Return undefined;
+	isOccupiedFrom(): Playerable | null {
+		return this._occupiedFrom;
+	}
+
+	setOccupier(occupier: Playerable) {
+		this._occupiedFrom = occupier;
 	}
 
 	toString(): string {
@@ -85,15 +90,30 @@ export default class Field implements Fieldable {
 	}
 
 	toLetter(showNum: boolean): string {
-		if (this._fieldType === FieldTypes.PATH) {
-			return ` ${showNum ? ' ' + this.getNumPath() + ' ' : ' - '} `;
-		} else if (this._fieldType === FieldTypes.WALL) {
-			return ` ${showNum ? ' ' + this.getNumPath() + ' ' : ' # '} `;
-		} else if (this._fieldType === FieldTypes.SPAWN) {
-			return ` ${showNum ? ' ' + this.getNumPath() + ' ' : ' * '} `;
-		} else {
-			throw new Error('No FieldType defined');
+		if (this._occupiedFrom === null) {
+			if (this._fieldType === FieldTypes.PATH) {
+				return ` ${showNum ? ' ' + this.getNumPath() + ' ' : ' - '} `;
+			} else if (this._fieldType === FieldTypes.WALL) {
+				return ` ${showNum ? ' ' + this.getNumPath() + ' ' : ' # '} `;
+			} else if (this._fieldType === FieldTypes.SPAWN) {
+				return ` ${showNum ? ' ' + this.getNumPath() + ' ' : ' * '} `;
+			} else {
+				throw new Error('No FieldType defined');
+			}
 		}
+
+		if (this._occupiedFrom.getPawnType() === PawnTypes.Yellow)
+			return ` ${showNum ? ' ' + this.getNumPath() + ' ' : ' Y '} `;
+		if (this._occupiedFrom.getPawnType() === PawnTypes.Cyan)
+			return ` ${showNum ? ' ' + this.getNumPath() + ' ' : ' C '} `;
+		if (this._occupiedFrom.getPawnType() === PawnTypes.Red)
+			return ` ${showNum ? ' ' + this.getNumPath() + ' ' : ' R '} `;
+		if (this._occupiedFrom.getPawnType() === PawnTypes.Pink)
+			return ` ${showNum ? ' ' + this.getNumPath() + ' ' : ' P '} `;
+		if (this._occupiedFrom.getPawnType() === PawnTypes.Orange)
+			return ` ${showNum ? ' ' + this.getNumPath() + ' ' : ' O '} `;
+
+		throw new Error('No Suitable Letter for this fieldType defined');
 	}
 
 	getNumPath(): number {

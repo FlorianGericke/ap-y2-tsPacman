@@ -12,7 +12,7 @@ export const Draggable: React.FC<Draggable> = (props) => {
 		type: 'pawn',
 		item: { type: props.type },
 		collect: (monitor) => ({
-			isDragging: !!monitor.isDragging(),
+			isDragging: monitor.isDragging(),
 		}),
 	}));
 

@@ -7,7 +7,6 @@ import GameField from '../field/GameField';
 export class GameManager implements GameManageable {
 	constructor(private uiInformation: TransferInterface) {
 		const temp = new GameField(uiInformation);
-		console.log(temp.toArray());
 		temp.printInConsole(false);
 		console.log('');
 		temp.printInConsole(true);

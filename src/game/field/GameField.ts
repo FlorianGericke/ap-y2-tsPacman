@@ -8,12 +8,24 @@ import { iGameField } from './iGameField';
 import { Move } from '../Move/Move';
 import { iMove } from '../Move/iMove';
 import { IllegalMoveRegisteredException } from './IllegalMoveRegisteredException';
-import { Player } from '../player/Player';
+import { Playerable } from '../player/Playerable';
+import { PawnTypes } from '../../transfers/PawnTypes';
+import { BordInformations } from './BordInformations';
+import { Direction } from '../Direction';
 
 export default class GameField implements iGameField {
-	private readonly _root: Field;
-	private registerdMoves: iMove[] = [];
-	constructor(private _uiInformation: TransferInterface) {
+	private readonly _ROOT: Field;
+	private registeredMoves: iMove[] = [];
+	private pacmanCanKill = false;
+
+	constructor(
+		private _uiInformation: TransferInterface,
+		private readonly _YELLOW_PAWN: Playerable,
+		private readonly _RED_PAWN: Playerable,
+		private readonly _PINK_PAWN: Playerable,
+		private readonly _CYAN_PAWN: Playerable,
+		private readonly _ORANGE_PAWN: Playerable,
+	) {
 		if (!_uiInformation) {
 			throw new Error(
 				'GameField needs uiInformation object to be initialized',
@@ -22,7 +34,7 @@ export default class GameField implements iGameField {
 		if (!_uiInformation.specifics.gameField) {
 			throw new Error('GameField needs uiInformation with gameFields');
 		}
-		this._root = new Field(
+		this._ROOT = new Field(
 			koordinateToId(0, 0),
 			null,
 			null,
@@ -69,12 +81,51 @@ export default class GameField implements iGameField {
 		for (const pawnPositionsKey of _uiInformation.globals.pawnPositions ??
 			[]) {
 			const position = idToKoordinate(pawnPositionsKey.position ?? '');
+			let insert: Playerable | null = null;
+			if (pawnPositionsKey.type === PawnTypes.Yellow)
+				insert = this._YELLOW_PAWN;
+			if (pawnPositionsKey.type === PawnTypes.Red)
+				insert = this._RED_PAWN;
+			if (pawnPositionsKey.type === PawnTypes.Pink)
+				insert = this._PINK_PAWN;
+			if (pawnPositionsKey.type === PawnTypes.Cyan)
+				insert = this._CYAN_PAWN;
+			if (pawnPositionsKey.type === PawnTypes.Orange)
+				insert = this._ORANGE_PAWN;
+
+			insert?.setPostionAsId(pawnPositionsKey.position ?? '');
+
 			this._getFieldFromCoordinates(
 				position[0],
 				position[1],
-			)?.setOccupier(new Player(pawnPositionsKey.type));
+			)?.setOccupier(insert);
 		}
 		console.log(_uiInformation);
+	}
+
+	getBordInformations() {
+		return new (class implements BordInformations {
+			constructor(public superThis: GameField) {}
+			getPositionOfCyan(): string {
+				return this.superThis._CYAN_PAWN.getPostionAsId();
+			}
+
+			getPositionOfOrange(): string {
+				return this.superThis._ORANGE_PAWN.getPostionAsId();
+			}
+
+			getPositionOfPink(): string {
+				return this.superThis._PINK_PAWN.getPostionAsId();
+			}
+
+			getPositionOfRed(): string {
+				return this.superThis._RED_PAWN.getPostionAsId();
+			}
+
+			getPositionOfYellow(): string {
+				return this.superThis._YELLOW_PAWN.getPostionAsId();
+			}
+		})(this);
 	}
 
 	registerMove(move: Move) {
@@ -84,28 +135,87 @@ export default class GameField implements iGameField {
 			);
 		}
 		if (
-			this.registerdMoves.length <
+			this.registeredMoves.length >=
 			this._uiInformation.globals.pawnPositions.length
 		) {
 			throw new IllegalMoveRegisteredException(
 				'Cannot register More moves then pawn are on the gameBoard',
 			);
 		}
-		for (let i = 0; i < this.registerdMoves.length; i++) {
-			if (this.registerdMoves[i].equals(move)) {
+		for (let i = 0; i < this.registeredMoves.length; i++) {
+			if (this.registeredMoves[i].equals(move)) {
 				throw new IllegalMoveRegisteredException(
-					'Cannot register a More move twice',
+					'Cannot register a move twice',
 				);
 			}
-			if (this.registerdMoves[i].getActual().equals(move.getActual())) {
+			if (this.registeredMoves[i].getActual() === move.getActual()) {
 				throw new IllegalMoveRegisteredException(
 					'Cannot register a more then 1 move from one origin',
 				);
 			}
 		}
+		this.registeredMoves.push(move);
 	}
 	makeMoves() {
-		throw new Error('not implemented');
+		if (
+			this.registeredMoves.length !==
+			(this._uiInformation.globals.pawnPositions ?? []).length
+		) {
+			throw new IllegalMoveRegisteredException(
+				'The amount of moves does not fit for the number of Players',
+			);
+		}
+
+		for (let i = 0; i < this.registeredMoves.length; i++) {
+			const position = idToKoordinate(
+				this.registeredMoves[i].getActual(),
+			);
+			const origin = this._getFieldFromCoordinates(
+				position[0],
+				position[1],
+			);
+			if (origin == null) {
+				throw new IllegalMoveRegisteredException(
+					'cannot find origin field',
+				);
+			}
+
+			const pawn = origin.isOccupiedFrom();
+
+			let destination: Fieldable | null;
+
+			if (this.registeredMoves[i].getDirection() === Direction.UP) {
+				destination = origin.getUpper();
+			}
+			if (this.registeredMoves[i].getDirection() === Direction.RIGHT) {
+				destination = origin.getRight();
+			}
+			if (this.registeredMoves[i].getDirection() === Direction.DOWN) {
+				destination = origin.getLower();
+			}
+			if (this.registeredMoves[i].getDirection() === Direction.LEFT) {
+				destination = origin.getLeft();
+			}
+
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore
+			if (destination == null) {
+				throw new IllegalMoveRegisteredException(
+					'no destination connection',
+				);
+			}
+			if (destination.getFieldType() !== FieldTypes.PATH) {
+				throw new IllegalMoveRegisteredException(
+					'Destination must be a path',
+				);
+			}
+
+			if (!destination.isOccupied()) {
+				origin.setOccupier(null);
+				destination.setOccupier(pawn);
+				pawn?.setPostionAsId(destination.getId());
+			}
+		}
 	}
 
 	private _toArray() {
@@ -130,7 +240,7 @@ export default class GameField implements iGameField {
 	}
 
 	private _getFieldFromCoordinates(x: number, y: number): Fieldable | null {
-		let walker = this._root;
+		let walker = this._ROOT;
 		for (let i = 0; i < y; i++) {
 			if (walker.getLower() !== null) {
 				walker = walker.getLower() as Field;

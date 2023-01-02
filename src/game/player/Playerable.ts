@@ -5,4 +5,6 @@ export interface Playerable {
 	goBackToSpawn: () => void;
 	getNextDirection(): () => Direction;
 	getPawnType: () => PawnTypes;
+	getPostionAsId: () => string;
+	setPostionAsId: (postion: string) => void;
 }

@@ -2,9 +2,14 @@ import { Playerable } from './Playerable';
 import { PawnTypes } from '../../transfers/PawnTypes';
 import { Direction } from 'tty';
 
-export class Player implements Playerable {
-	constructor(private _pawnType: PawnTypes) {}
+export abstract class Player implements Playerable {
+	private _position = '';
 
+	protected constructor(private _pawnType: PawnTypes) {}
+
+	setPostionAsId(postion: string) {
+		this._position = postion;
+	}
 	getPawnType(): PawnTypes {
 		return this._pawnType;
 	}
@@ -13,7 +18,9 @@ export class Player implements Playerable {
 		throw new Error('not implemented yet');
 	}
 
-	getNextDirection(): () => Direction {
-		throw new Error('not implemented yet');
+	abstract getNextDirection(): () => Direction;
+
+	getPostionAsId(): string {
+		return this._position;
 	}
 }

@@ -12,9 +12,11 @@ export interface Fieldable {
 	getFieldType: () => FieldTypes;
 	isOccupied: () => boolean;
 	isOccupiedFrom: () => Playerable | null;
-	setOccupier: (occupier: Playerable) => void;
+	setOccupier: (occupier: Playerable | null) => void;
 
 	equals: (other: Fieldable) => boolean;
 	toLetter: (showNum: boolean) => string;
 	toString: () => string;
+
+	getId(): string;
 }

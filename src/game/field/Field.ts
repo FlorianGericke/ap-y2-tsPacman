@@ -74,7 +74,7 @@ export default class Field implements Fieldable {
 		return this._occupiedFrom;
 	}
 
-	setOccupier(occupier: Playerable) {
+	setOccupier(occupier: Playerable | null) {
 		this._occupiedFrom = occupier;
 	}
 
@@ -136,5 +136,9 @@ export default class Field implements Fieldable {
 		}
 
 		return i;
+	}
+
+	getId(): string {
+		return this._id;
 	}
 }

@@ -1,8 +1,10 @@
 import { Direction } from '../Direction';
 import { PawnTypes } from '../../transfers/PawnTypes';
+import { Fieldable } from '../field/Fieldable';
 
 export interface Playerable {
-	goBackToSpawn: () => void;
+	getSpawnField: () => Fieldable;
+	setSpawnField: (spawn: Fieldable) => void;
 	getNextDirection(): () => Direction;
 	getPawnType: () => PawnTypes;
 	getPostionAsId: () => string;

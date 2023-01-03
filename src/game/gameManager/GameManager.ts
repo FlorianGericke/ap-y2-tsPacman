@@ -1,6 +1,5 @@
 import { TransferInterface } from './../../transfers/TransferInterface';
 import { GameManageable } from './GameManageable';
-import { Controllable } from '../Controllable';
 import React from 'react';
 import GameField from '../field/GameField';
 import { Move } from '../Move/Move';
@@ -10,10 +9,19 @@ import { RedPawn } from '../player/PawnLogic/RedPawn';
 import { PinkPawn } from '../player/PawnLogic/PinkPawn';
 import { CyanPawn } from '../player/PawnLogic/CyanPawn';
 import { OrangePawn } from '../player/PawnLogic/OrangePawn';
+import { PawnTypes } from '../../transfers/PawnTypes';
+import { GameManagerException } from './GameManagerException';
 
 export class GameManager implements GameManageable {
+	private _uiUpdateHook: React.Dispatch<
+		React.SetStateAction<TransferInterface>
+	> | null = null;
+	private _gamefield: GameField | null = null;
+
+	private _userInput = Direction.RIGHT;
+
 	constructor(private uiInformation: TransferInterface) {
-		const temp = new GameField(
+		this._gamefield = new GameField(
 			uiInformation,
 			new YellowPawn(),
 			new RedPawn(),
@@ -21,49 +29,24 @@ export class GameManager implements GameManageable {
 			new CyanPawn(),
 			new OrangePawn(),
 		);
-		temp.printInConsole(false);
-		console.log('');
-		temp.registerMove(
-			new Move(
-				temp.getBordInformations().getPositionOfYellow(),
-				Direction.UP,
-			),
-		);
-		temp.registerMove(
-			new Move(
-				temp.getBordInformations().getPositionOfRed(),
-				Direction.DOWN,
-			),
-		);
-		temp.registerMove(
-			new Move(
-				temp.getBordInformations().getPositionOfPink(),
-				Direction.LEFT,
-			),
-		);
-		temp.registerMove(
-			new Move(
-				temp.getBordInformations().getPositionOfCyan(),
-				Direction.RIGHT,
-			),
-		);
-		temp.registerMove(
-			new Move(
-				temp.getBordInformations().getPositionOfOrange(),
-				Direction.LEFT,
-			),
-		);
-		temp.makeMoves();
-		temp.printInConsole(false);
+		document.addEventListener('keypress', (e: KeyboardEvent) => {
+			if (e.key === 'w') {
+				this._userInput = Direction.UP;
+			}
+			if (e.key === 'd') {
+				this._userInput = Direction.RIGHT;
+			}
+			if (e.key === 's') {
+				this._userInput = Direction.DOWN;
+			}
+			if (e.key === 'a') {
+				this._userInput = Direction.LEFT;
+			}
+		});
 	}
 
 	endGame(): void {
 		throw new Error('not implemented yet');
-	}
-
-	getGameControls(): Controllable {
-		throw new Error('not implemented yet');
-		// return undefined;
 	}
 
 	holdGame(): void {
@@ -71,12 +54,84 @@ export class GameManager implements GameManageable {
 	}
 
 	runGame(): void {
-		throw new Error('not implemented yet');
+		setInterval(() => this._tick(), 500);
+		// this._tick();
+		// this._tick();
 	}
 
 	setUiUpdateHook(
 		hook: React.Dispatch<React.SetStateAction<TransferInterface>>,
 	): void {
-		throw new Error('not implemented yet');
+		this._uiUpdateHook = hook;
+	}
+
+	private _tick() {
+		if (this._gamefield == null) {
+			throw new GameManagerException(
+				'Cannot perform game tick when gamefield is empty',
+			);
+		}
+		this._gamefield.registerMove(
+			new Move(
+				this._gamefield.getBordInformations().getPositionOfYellow(),
+				this._userInput,
+			),
+		);
+		this._gamefield.registerMove(
+			new Move(
+				this._gamefield.getBordInformations().getPositionOfRed(),
+				Math.floor(Math.random() * 5),
+			),
+		);
+		this._gamefield.registerMove(
+			new Move(
+				this._gamefield.getBordInformations().getPositionOfPink(),
+				Math.floor(Math.random() * 5),
+			),
+		);
+		this._gamefield.registerMove(
+			new Move(
+				this._gamefield.getBordInformations().getPositionOfCyan(),
+				Math.floor(Math.random() * 5),
+			),
+		);
+		this._gamefield.registerMove(
+			new Move(
+				this._gamefield.getBordInformations().getPositionOfOrange(),
+				Math.floor(Math.random() * 5),
+			),
+		);
+		this._gamefield.makeMoves();
+		this._gamefield.printInConsole(false);
+		this._repaintPawnsOnUi();
+	}
+
+	private _repaintPawnsOnUi() {
+		const pawnPositions = this.uiInformation.globals.pawnPositions;
+
+		if (pawnPositions == null) {
+			throw new GameManagerException(
+				'Cannot Update Ui with empty pawn Positions',
+			);
+		}
+
+		pawnPositions.find((pawn) => pawn.type === PawnTypes.Yellow)!.position =
+			this._gamefield?.getBordInformations().getPositionOfYellow();
+
+		pawnPositions.find((pawn) => pawn.type === PawnTypes.Red)!.position =
+			this._gamefield?.getBordInformations().getPositionOfRed();
+
+		pawnPositions.find((pawn) => pawn.type === PawnTypes.Pink)!.position =
+			this._gamefield?.getBordInformations().getPositionOfPink();
+
+		pawnPositions.find((pawn) => pawn.type === PawnTypes.Cyan)!.position =
+			this._gamefield?.getBordInformations().getPositionOfCyan();
+
+		pawnPositions.find((pawn) => pawn.type === PawnTypes.Orange)!.position =
+			this._gamefield?.getBordInformations().getPositionOfOrange();
+
+		this.uiInformation.globals.pawnPositions = pawnPositions;
+
+		this._uiUpdateHook?.(JSON.parse(JSON.stringify(this.uiInformation)));
 	}
 }

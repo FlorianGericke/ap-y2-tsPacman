@@ -95,10 +95,16 @@ export default class GameField implements iGameField {
 
 			insert?.setPostionAsId(pawnPositionsKey.position ?? '');
 
-			this._getFieldFromCoordinates(
-				position[0],
-				position[1],
-			)?.setOccupier(insert);
+			const spawnField =
+				this._getFieldFromCoordinates(position[0], position[1]) ?? null;
+
+			if (spawnField == null) {
+				throw new Error('Spawn field cannot found');
+			}
+
+			insert?.setSpawnField(spawnField);
+
+			spawnField.setOccupier(insert);
 		}
 		console.log(_uiInformation);
 	}
@@ -197,17 +203,13 @@ export default class GameField implements iGameField {
 				destination = origin.getLeft();
 			}
 
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			if (destination == null) {
-				throw new IllegalMoveRegisteredException(
-					'no destination connection',
-				);
-			}
-			if (destination.getFieldType() !== FieldTypes.PATH) {
-				throw new IllegalMoveRegisteredException(
-					'Destination must be a path',
-				);
+			if (
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore
+				destination == null ||
+				destination.getFieldType() !== FieldTypes.PATH
+			) {
+				continue;
 			}
 
 			if (!destination.isOccupied()) {
@@ -216,6 +218,7 @@ export default class GameField implements iGameField {
 				pawn?.setPostionAsId(destination.getId());
 			}
 		}
+		this.registeredMoves = [];
 	}
 
 	private _toArray() {

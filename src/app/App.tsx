@@ -143,7 +143,9 @@ export const App: React.FC = () => {
 			return;
 		}
 		setGamePhase(GamePhase.PLAY);
-		new GameManager(gameFieldInformation);
+		const gameManager = new GameManager(gameFieldInformation);
+		gameManager.setUiUpdateHook(setGameFieldInformation);
+		gameManager.runGame();
 	}
 
 	return (

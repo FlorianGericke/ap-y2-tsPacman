@@ -1,7 +1,7 @@
 import { Player } from '../Player';
 
 import { PawnTypes } from '../../../transfers/PawnTypes';
-import { Direction } from 'tty';
+import { Direction } from '../../Direction';
 
 export class RedPawn extends Player {
 	constructor() {

@@ -12,6 +12,7 @@ import { Playerable } from '../player/Playerable';
 import { PawnTypes } from '../../transfers/PawnTypes';
 import { BordInformations } from './BordInformations';
 import { Direction } from '../Direction';
+import { BoardMoveException } from './BoardMoveException';
 
 export default class GameField implements iGameField {
 	private readonly _ROOT: Field;
@@ -102,7 +103,7 @@ export default class GameField implements iGameField {
 				throw new Error('Spawn field cannot found');
 			}
 
-			insert?.setSpawnField(spawnField);
+			insert?.setSpawnAsId(spawnField.getId());
 
 			spawnField.setOccupier(insert);
 		}
@@ -112,6 +113,16 @@ export default class GameField implements iGameField {
 	getBordInformations() {
 		return new (class implements BordInformations {
 			constructor(public superThis: GameField) {}
+
+			getFieldOfId(id: string): Fieldable {
+				const temp = this.superThis._getFieldFromId(id);
+				return JSON.parse(JSON.stringify(temp)); // TODO How to deep clone a circular Reference ???
+			}
+			getFieldOfCoordinate(x: number, y: number): Fieldable {
+				const temp = this.superThis._getFieldFromCoordinates(x, y);
+				return JSON.parse(JSON.stringify(temp)); // TODO How to deep clone a circular Reference ???
+			}
+
 			getPositionOfCyan(): string {
 				return this.superThis._CYAN_PAWN.getPostionAsId();
 			}
@@ -162,12 +173,13 @@ export default class GameField implements iGameField {
 		}
 		this.registeredMoves.push(move);
 	}
+
 	makeMoves() {
 		if (
 			this.registeredMoves.length !==
 			(this._uiInformation.globals.pawnPositions ?? []).length
 		) {
-			throw new IllegalMoveRegisteredException(
+			throw new BoardMoveException(
 				'The amount of moves does not fit for the number of Players',
 			);
 		}
@@ -181,9 +193,7 @@ export default class GameField implements iGameField {
 				position[1],
 			);
 			if (origin == null) {
-				throw new IllegalMoveRegisteredException(
-					'cannot find origin field',
-				);
+				throw new BoardMoveException('cannot find origin field');
 			}
 
 			const pawn = origin.isOccupiedFrom();
@@ -215,10 +225,42 @@ export default class GameField implements iGameField {
 			if (!destination.isOccupied()) {
 				origin.setOccupier(null);
 				destination.setOccupier(pawn);
-				pawn?.setPostionAsId(destination.getId());
+				// pawn?.setPostionAsId(destination.getId());
+				continue;
+			}
+
+			if (
+				origin.isOccupiedFrom()?.getPawnType() === PawnTypes.Yellow ||
+				destination.isOccupiedFrom()?.getPawnType() === PawnTypes.Yellow
+			) {
+				if (this.pacmanCanKill) {
+					this._resetOnlyGostPawns();
+				} else {
+					this._resetAllPawns();
+				}
 			}
 		}
 		this.registeredMoves = [];
+	}
+
+	private _resetPawn(pawn: Playerable) {
+		const position = pawn.getPostionAsId();
+		const spawn = pawn.getSpawnAsId();
+
+		this._getFieldFromId(position).setOccupier(null);
+		this._getFieldFromId(spawn).setOccupier(pawn);
+	}
+
+	private _resetOnlyGostPawns() {
+		this._resetPawn(this._CYAN_PAWN);
+		this._resetPawn(this._RED_PAWN);
+		this._resetPawn(this._ORANGE_PAWN);
+		this._resetPawn(this._PINK_PAWN);
+	}
+
+	private _resetAllPawns() {
+		this._resetPawn(this._YELLOW_PAWN);
+		this._resetOnlyGostPawns();
 	}
 
 	private _toArray() {
@@ -242,20 +284,28 @@ export default class GameField implements iGameField {
 		}
 	}
 
-	private _getFieldFromCoordinates(x: number, y: number): Fieldable | null {
+	private _getFieldFromId(id: string) {
+		const position = idToKoordinate(id);
+		if (position == null) {
+			throw new Error('cannot get field from null koordinate');
+		}
+		return this._getFieldFromCoordinates(position[0], position[1]);
+	}
+
+	private _getFieldFromCoordinates(x: number, y: number): Fieldable {
 		let walker = this._ROOT;
 		for (let i = 0; i < y; i++) {
 			if (walker.getLower() !== null) {
 				walker = walker.getLower() as Field;
 			} else {
-				return null;
+				throw new Error('cannot get field from null koordinate');
 			}
 		}
 		for (let i = 0; i < x; i++) {
 			if (walker.getRight() !== null) {
 				walker = walker.getRight() as Field;
 			} else {
-				return null;
+				throw new Error('cannot get field from null koordinate');
 			}
 		}
 		return walker;

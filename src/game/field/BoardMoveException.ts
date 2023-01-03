@@ -1,4 +1,4 @@
-export class IllegalMoveRegisteredException extends Error {
+export class BoardMoveException extends Error {
 	constructor(message: string) {
 		super(message);
 	}

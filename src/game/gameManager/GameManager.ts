@@ -20,14 +20,20 @@ export class GameManager implements GameManageable {
 
 	private _userInput = Direction.RIGHT;
 
+	private _yellowPawn = new YellowPawn();
+	private _redPawn = new RedPawn();
+	private _pinkPawn = new PinkPawn();
+	private _cyanPawn = new CyanPawn();
+	private _orangePawn = new OrangePawn();
+
 	constructor(private uiInformation: TransferInterface) {
 		this._gamefield = new GameField(
 			uiInformation,
-			new YellowPawn(),
-			new RedPawn(),
-			new PinkPawn(),
-			new CyanPawn(),
-			new OrangePawn(),
+			this._yellowPawn,
+			this._redPawn,
+			this._pinkPawn,
+			this._cyanPawn,
+			this._orangePawn,
 		);
 		document.addEventListener('keypress', (e: KeyboardEvent) => {
 			if (e.key === 'w') {
@@ -92,7 +98,9 @@ export class GameManager implements GameManageable {
 		this._gamefield.registerMove(
 			new Move(
 				this._gamefield.getBordInformations().getPositionOfCyan(),
-				Math.floor(Math.random() * 5),
+				this._cyanPawn.getNextDirection(
+					this._gamefield.getBordInformations(),
+				),
 			),
 		);
 		this._gamefield.registerMove(
@@ -102,7 +110,7 @@ export class GameManager implements GameManageable {
 			),
 		);
 		this._gamefield.makeMoves();
-		this._gamefield.printInConsole(false);
+		// this._gamefield.printInConsole(false);
 		this._repaintPawnsOnUi();
 	}
 

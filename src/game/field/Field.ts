@@ -76,6 +76,7 @@ export default class Field implements Fieldable {
 
 	setOccupier(occupier: Playerable | null) {
 		this._occupiedFrom = occupier;
+		occupier?.setPostionAsId(this.getId());
 	}
 
 	toString(): string {

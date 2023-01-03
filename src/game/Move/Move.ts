@@ -31,6 +31,9 @@ export class Move implements iMove {
 		return `{ ${this.getActual()} => ${this.getDirection()} `;
 	}
 	equals(other: iMove): boolean {
-		return other.toString() === this.toString();
+		return (
+			this.getActual() === other.getActual() &&
+			this.getDirection() === other.getDirection()
+		);
 	}
 }

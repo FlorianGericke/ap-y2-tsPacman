@@ -9,6 +9,6 @@ export class RedPawn extends Player {
 		super(PawnTypes.Red);
 	}
 	getNextDirection(info: BordInformations): Direction {
-		throw new Error('not implemented yet');
+		return Math.floor(Math.random() * 5);
 	}
 }

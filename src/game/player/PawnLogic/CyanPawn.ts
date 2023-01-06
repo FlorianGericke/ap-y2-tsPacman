@@ -15,7 +15,7 @@ export class CyanPawn extends Player {
 	getNextDirection(info: BordInformations): Direction {
 		// info.getFieldOfId(this.getPostionAsId()).setOccupier(null);
 		// info.getFieldOfCoordinate(1, 1).setOccupier(this);
-		this._counter++;
-		return Direction.RIGHT;
+		// this._counter++;
+		return Math.floor(Math.random() * 5);
 	}
 }

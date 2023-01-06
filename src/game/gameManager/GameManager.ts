@@ -11,6 +11,7 @@ import { CyanPawn } from '../player/PawnLogic/CyanPawn';
 import { OrangePawn } from '../player/PawnLogic/OrangePawn';
 import { PawnTypes } from '../../transfers/PawnTypes';
 import { GameManagerException } from './GameManagerException';
+import { red } from '@mui/material/colors';
 
 export class GameManager implements GameManageable {
 	private _uiUpdateHook: React.Dispatch<
@@ -60,7 +61,7 @@ export class GameManager implements GameManageable {
 	}
 
 	runGame(): void {
-		setInterval(() => this._tick(), 500);
+		setInterval(() => this._tick(), 250);
 		// this._tick();
 		// this._tick();
 	}
@@ -86,13 +87,17 @@ export class GameManager implements GameManageable {
 		this._gamefield.registerMove(
 			new Move(
 				this._gamefield.getBordInformations().getPositionOfRed(),
-				Math.floor(Math.random() * 5),
+				this._redPawn.getNextDirection(
+					this._gamefield.getBordInformations(),
+				),
 			),
 		);
 		this._gamefield.registerMove(
 			new Move(
 				this._gamefield.getBordInformations().getPositionOfPink(),
-				Math.floor(Math.random() * 5),
+				this._pinkPawn.getNextDirection(
+					this._gamefield.getBordInformations(),
+				),
 			),
 		);
 		this._gamefield.registerMove(
@@ -106,11 +111,17 @@ export class GameManager implements GameManageable {
 		this._gamefield.registerMove(
 			new Move(
 				this._gamefield.getBordInformations().getPositionOfOrange(),
-				Math.floor(Math.random() * 5),
+				this._orangePawn.getNextDirection(
+					this._gamefield.getBordInformations(),
+				),
 			),
 		);
+
 		this._gamefield.makeMoves();
-		// this._gamefield.printInConsole(false);
+		console.clear();
+		this._gamefield.printInConsole(false);
+		console.log(' ');
+		this._gamefield.printInConsole(true);
 		this._repaintPawnsOnUi();
 	}
 
